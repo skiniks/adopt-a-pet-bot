@@ -139,11 +139,6 @@ const createPost = async (petDetails) => {
     }
 };
 
-(async function() {
-    await fetchPetfinderToken();
-    await getRandomPet();
-})();
-
 export default async (_req, res) => {
     try {
         await fetchPetfinderToken();
