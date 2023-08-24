@@ -1,0 +1,11 @@
+{
+	"name": "adopt-a-pet-bot",
+	"type": "module",
+	"private": true,
+	"dependencies": {
+		"@atproto/api": "^0.6.6",
+		"axios": "^1.4.0",
+		"dotenv": "^16.3.1",
+		"superagent": "^8.1.2"
+	}
+}
