@@ -46,6 +46,13 @@ async function getRandomPet() {
 
         if (response.data && response.data.animals && response.data.animals.length > 0) {
             const pet = response.data.animals[0];
+
+            if (!pet.contact.address.city || !pet.contact.address.state) {
+                console.log("Pet does not have city and state. Trying another one...");
+                await getRandomPet();
+                return;
+            }
+
             let photoUrls = [];
             if (pet.photos && pet.photos.length > 0) {
                 photoUrls = pet.photos.map(photo => photo.large);
@@ -72,6 +79,7 @@ async function getRandomPet() {
         console.error('Error fetching a random pet:', error.message);
     }
 }
+
 
 const getImageAsBuffer = async (imageUrl) => {
     try {
@@ -100,13 +108,14 @@ const createPost = async (petDetails) => {
             }
         }
 
-        const postText = `Meet ${petDetails.name}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${petDetails.url}`;
+        const formattedName = petDetails.name.trim().replace(/\s+,/, ',');
+        const postText = `Meet ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${petDetails.url}`;
 
         const rt = new RichText({ text: postText });
         await rt.detectFacets(agent);
 
         const imagesEmbed = imageBlobRefs.map(blobRef => {
-            let altText = `${petDetails.name} is a ${petDetails.species}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`;
+            let altText = `${formattedName} is a ${petDetails.species}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`;
 
             return {
                 $type: 'app.bsky.embed.image',
