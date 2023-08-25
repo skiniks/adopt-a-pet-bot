@@ -105,11 +105,15 @@ const createPost = async (petDetails) => {
         const rt = new RichText({ text: postText });
         await rt.detectFacets(agent);
 
-        const imagesEmbed = imageBlobRefs.map(blobRef => ({
-            $type: 'app.bsky.embed.image',
-            image: blobRef,
-            alt: postText,
-        }));
+        const imagesEmbed = imageBlobRefs.map(blobRef => {
+            let altText = `${petDetails.name} is a ${petDetails.species}, available for adoption in ${petDetails.contact.address.city}.`;
+
+            return {
+                $type: 'app.bsky.embed.image',
+                image: blobRef,
+                alt: altText
+            };
+        });
 
         const postRecord = {
             $type: 'app.bsky.feed.post',
