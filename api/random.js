@@ -106,7 +106,7 @@ const createPost = async (petDetails) => {
         await rt.detectFacets(agent);
 
         const imagesEmbed = imageBlobRefs.map(blobRef => {
-            let altText = `${petDetails.name} is a ${petDetails.species}, available for adoption in ${petDetails.contact.address.city}.`;
+            let altText = `${petDetails.name} is a ${petDetails.species}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`;
 
             return {
                 $type: 'app.bsky.embed.image',
