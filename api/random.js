@@ -43,7 +43,6 @@ async function getRandomPet() {
         };
 
         const response = await axios.get(ANIMALS_URL, config);
-
         if (response.data && response.data.animals && response.data.animals.length > 0) {
             const pet = response.data.animals[0];
 
@@ -65,7 +64,8 @@ async function getRandomPet() {
                 species: pet.species,
                 age: pet.age,
                 url: pet.url,
-                photoUrls: photoUrls
+                photoUrls: photoUrls,
+                breeds: pet.breeds
             });
 
             if (!postSuccess) {
@@ -107,6 +107,20 @@ const createPost = async (petDetails) => {
             }
         }
 
+        let breedStr = '';
+        if (petDetails.breeds.primary) {
+            breedStr = petDetails.breeds.primary;
+            if (petDetails.breeds.secondary) {
+                breedStr += ` and ${petDetails.breeds.secondary}`;
+            }
+        } else if (petDetails.breeds.unknown) {
+            breedStr = 'unknown breed';
+        }
+
+        if (petDetails.breeds.mixed) {
+            breedStr += ' mix';
+        }
+
         const formattedName = petDetails.name.trim().replace(/\s+,/, ',');
         const postText = `Meet ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${petDetails.url}`;
 
@@ -114,7 +128,7 @@ const createPost = async (petDetails) => {
         await rt.detectFacets(agent);
 
         const imagesEmbed = imageBlobRefs.map(blobRef => {
-            let altText = `${formattedName} is a ${petDetails.species.toLowerCase()}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`;
+            let altText = `${formattedName} is a ${breedStr} ${petDetails.species.toLowerCase()}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`;
 
             return {
                 $type: 'app.bsky.embed.image',
