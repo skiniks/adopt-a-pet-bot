@@ -80,7 +80,6 @@ async function getRandomPet() {
     }
 }
 
-
 const getImageAsBuffer = async (imageUrl) => {
     try {
         const res = await request.get(imageUrl).responseType('blob');
@@ -115,7 +114,7 @@ const createPost = async (petDetails) => {
         await rt.detectFacets(agent);
 
         const imagesEmbed = imageBlobRefs.map(blobRef => {
-            let altText = `${formattedName} is a ${petDetails.species}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`;
+            let altText = `${formattedName} is a ${petDetails.species.toLowerCase()}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`;
 
             return {
                 $type: 'app.bsky.embed.image',
