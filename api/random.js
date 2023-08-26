@@ -117,10 +117,6 @@ const createPost = async (petDetails) => {
             breedStr = 'unknown breed';
         }
 
-        if (petDetails.breeds.mixed) {
-            breedStr += ' mix';
-        }
-
         const formattedName = petDetails.name.trim().replace(/\s+,/, ',');
         const postText = `Meet ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${petDetails.url}`;
 
