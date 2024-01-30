@@ -107,9 +107,6 @@ const createPost = async (petDetails) => {
             }
         }
 
-        const greetingPhrases = ["Meet", "Say hello to", "Introducing", "Meet your new friend"];
-        const randomGreeting = greetingPhrases[Math.floor(Math.random() * greetingPhrases.length)];
-
         let breedStr = '';
         if (petDetails.breeds.primary) {
             breedStr = petDetails.breeds.primary;
@@ -125,7 +122,7 @@ const createPost = async (petDetails) => {
         }
 
         const formattedName = petDetails.name.trim().replace(/\s+,/, ',');
-        const postText = `${randomGreeting} ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${petDetails.url}`;
+        const postText = `Meet ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${petDetails.url}`;
 
         const rt = new RichText({ text: postText });
         await rt.detectFacets(agent);
