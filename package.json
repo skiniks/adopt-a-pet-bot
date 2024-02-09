@@ -7,9 +7,9 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@atproto/api": "^0.6.6",
-    "axios": "^1.4.0",
-    "dotenv": "^16.3.1",
+    "@atproto/api": "^0.9.6",
+    "axios": "^1.6.7",
+    "dotenv": "^16.4.1",
     "superagent": "^8.1.2"
   },
   "devDependencies": {
