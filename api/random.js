@@ -1,5 +1,7 @@
+import pkg from '@atproto/api'
 import request from 'superagent'
-import { AppBskyFeedPost, BskyAgent, RichText } from '@atproto/api'
+
+const { BskyAgent, AppBskyFeedPost, RichText } = pkg
 
 const PETFINDER_API_KEY = process.env.PETFINDER_API_KEY
 const PETFINDER_SECRET = process.env.PETFINDER_SECRET
