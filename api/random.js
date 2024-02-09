@@ -1,10 +1,16 @@
 import axios from 'axios'
+import dotenv from 'dotenv'
 import pkg from '@atproto/api'
 import request from 'superagent'
-import config from './config.js'
 
 const { BskyAgent, AppBskyFeedPost, RichText } = pkg
-const { PETFINDER_API_KEY, PETFINDER_SECRET, BSKY_USERNAME, BSKY_PASSWORD } = config
+
+dotenv.config()
+
+const PETFINDER_API_KEY = process.env.PETFINDER_API_KEY
+const PETFINDER_SECRET = process.env.PETFINDER_SECRET
+const BSKY_USERNAME = process.env.BSKY_USERNAME
+const BSKY_PASSWORD = process.env.BSKY_PASSWORD
 
 const TOKEN_URL = 'https://api.petfinder.com/v2/oauth2/token'
 const ANIMALS_URL = 'https://api.petfinder.com/v2/animals'
