@@ -1,5 +1,6 @@
 import pkg from '@atproto/api'
-import request from 'superagent'
+
+const { Buffer } = require('node:buffer')
 
 const { BskyAgent, AppBskyFeedPost, RichText } = pkg
 
@@ -103,8 +104,11 @@ async function getRandomPet(attempt = 0) {
 
 async function getImageAsBuffer(imageUrl) {
   try {
-    const res = await request.get(imageUrl).responseType('blob')
-    return res.body
+    const response = await fetch(imageUrl)
+    if (!response.ok)
+      throw new Error(`HTTP error! status: ${response.status}`)
+    const arrayBuffer = await response.arrayBuffer()
+    return Buffer.from(arrayBuffer)
   }
   catch (err) {
     console.error('Error fetching the image as a buffer:', err)
