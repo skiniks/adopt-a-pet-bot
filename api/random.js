@@ -1,11 +1,8 @@
 import axios from 'axios'
-import dotenv from 'dotenv'
 import pkg from '@atproto/api'
 import request from 'superagent'
 
 const { BskyAgent, AppBskyFeedPost, RichText } = pkg
-
-dotenv.config()
 
 const PETFINDER_API_KEY = process.env.PETFINDER_API_KEY
 const PETFINDER_SECRET = process.env.PETFINDER_SECRET
