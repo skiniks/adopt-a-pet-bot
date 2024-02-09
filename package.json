@@ -1,14 +1,12 @@
 {
   "name": "adopt-a-pet-bot",
-  "type": "module",
   "private": true,
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@atproto/api": "^0.9.6",
-    "superagent": "^8.1.2"
+    "@atproto/api": "^0.9.6"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.6.4",

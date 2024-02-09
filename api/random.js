@@ -1,7 +1,5 @@
 import { Buffer } from 'node:buffer'
-import pkg from '@atproto/api'
-
-const { BskyAgent, AppBskyFeedPost, RichText } = pkg
+import { AppBskyFeedPost, BskyAgent, RichText } from '@atproto/api'
 
 const PETFINDER_API_KEY = process.env.PETFINDER_API_KEY
 const PETFINDER_SECRET = process.env.PETFINDER_SECRET
