@@ -7,4 +7,4 @@ const config = {
   BSKY_PASSWORD: process.env.BSKY_PASSWORD,
 }
 
-module.exports = config
+export default config
