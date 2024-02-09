@@ -1,3 +1,4 @@
+import axios from 'axios'
 import pkg from '@atproto/api'
 import request from 'superagent'
 
@@ -15,64 +16,44 @@ let token = ''
 
 async function fetchPetfinderToken() {
   try {
-    const response = await fetch(TOKEN_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        grant_type: 'client_credentials',
-        client_id: PETFINDER_API_KEY,
-        client_secret: PETFINDER_SECRET,
-      }),
+    const response = await axios.post(TOKEN_URL, {
+      grant_type: 'client_credentials',
+      client_id: PETFINDER_API_KEY,
+      client_secret: PETFINDER_SECRET,
     })
-
-    if (!response.ok)
-      throw new Error(`HTTP error! status: ${response.status}`)
-
-    const data = await response.json()
-    token = data.access_token
+    token = response.data.access_token
   }
   catch (error) {
     console.error('Error fetching Petfinder token:', error.message)
   }
 }
 
-async function getRandomPet(attempt = 0) {
-  const maxAttempts = 5
-  if (attempt >= maxAttempts) {
-    // eslint-disable-next-line no-console
-    console.log('Max attempts reached without finding a suitable pet.')
-    return
-  }
-
+async function getRandomPet() {
   try {
-    const response = await fetch(`${ANIMALS_URL}?sort=random&limit=1`, {
+    const config = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    })
+      params: {
+        sort: 'random',
+        limit: 1,
+      },
+    }
 
-    if (!response.ok)
-      throw new Error(`HTTP error! status: ${response.status}`)
-
-    const data = await response.json()
-
-    if (data && data.animals && data.animals.length > 0) {
-      const pet = data.animals[0]
+    const response = await axios.get(ANIMALS_URL, config)
+    if (response.data && response.data.animals && response.data.animals.length > 0) {
+      const pet = response.data.animals[0]
 
       if (!pet.contact.address.city || !pet.contact.address.state) {
         // eslint-disable-next-line no-console
         console.log('Pet does not have city and state. Trying another one...')
-        return await getRandomPet(attempt + 1)
+        await getRandomPet()
+        return
       }
 
-      const photoUrls = pet.photos && pet.photos.length > 0 ? pet.photos.map(photo => photo.large) : []
-      if (photoUrls.length === 0) {
-        // eslint-disable-next-line no-console
-        console.log('Pet does not have images. Trying another one...')
-        return await getRandomPet(attempt + 1)
-      }
+      let photoUrls = []
+      if (pet.photos && pet.photos.length > 0)
+        photoUrls = pet.photos.map(photo => photo.large)
 
       const postSuccess = await createPost({
         name: pet.name,
@@ -88,7 +69,7 @@ async function getRandomPet(attempt = 0) {
       if (!postSuccess) {
         // eslint-disable-next-line no-console
         console.log('Failed to create a post with current pet. Trying another one...')
-        return await getRandomPet(attempt + 1)
+        await getRandomPet()
       }
     }
     else {
@@ -130,21 +111,28 @@ async function createPost(petDetails) {
       }
     }
 
-    let breedStr = petDetails.breeds.primary ? petDetails.breeds.primary : 'unknown breed'
-    if (petDetails.breeds.secondary)
-      breedStr += ` and ${petDetails.breeds.secondary}`
+    let breedStr = ''
+    if (petDetails.breeds.primary) {
+      breedStr = petDetails.breeds.primary
+      if (petDetails.breeds.secondary)
+        breedStr += ` and ${petDetails.breeds.secondary}`
+    }
+    else if (petDetails.breeds.unknown) {
+      breedStr = 'unknown breed'
+    }
 
-    if (petDetails.breeds.mixed && !breedStr.toLowerCase().includes('mix'))
+    if (petDetails.breeds.mixed && !breedStr.toLowerCase().includes('mix') && !breedStr.toLowerCase().includes('mixed breed'))
       breedStr += ' mix'
 
     const formattedName = petDetails.name.trim().replace(/\s+,/, ',')
-    const postText = `Meet ${formattedName}, a ${breedStr} located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${petDetails.url}`
+    const postText = `Meet ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${petDetails.url}`
 
     const rt = new RichText({ text: postText })
     await rt.detectFacets(agent)
 
     const imagesEmbed = imageBlobRefs.map((blobRef) => {
-      const altText = `${formattedName} is a ${breedStr} ${petDetails.species.toLowerCase()}, available for adoption.`
+      const altText = `${formattedName} is a ${breedStr} ${petDetails.species.toLowerCase()}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`
+
       return {
         $type: 'app.bsky.embed.image',
         image: blobRef,
@@ -190,7 +178,8 @@ export default async (_req, res) => {
     res.status(200).json({ success: true })
   }
   catch (error) {
-    console.error(error)
+    // eslint-disable-next-line no-console
+    console.log(error)
     res.status(500).json({ success: false, message: error.message })
   }
 }
