@@ -7,7 +7,6 @@
   },
   "dependencies": {
     "@atproto/api": "^0.9.6",
-    "axios": "^1.6.7",
     "superagent": "^8.1.2"
   },
   "devDependencies": {

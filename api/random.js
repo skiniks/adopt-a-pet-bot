@@ -1,4 +1,3 @@
-import axios from 'axios'
 import pkg from '@atproto/api'
 import request from 'superagent'
 
@@ -16,12 +15,19 @@ let token = ''
 
 async function fetchPetfinderToken() {
   try {
-    const response = await axios.post(TOKEN_URL, {
-      grant_type: 'client_credentials',
-      client_id: PETFINDER_API_KEY,
-      client_secret: PETFINDER_SECRET,
+    const response = await fetch(TOKEN_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        grant_type: 'client_credentials',
+        client_id: PETFINDER_API_KEY,
+        client_secret: PETFINDER_SECRET,
+      }),
     })
-    token = response.data.access_token
+    const data = await response.json()
+    token = data.access_token
   }
   catch (error) {
     console.error('Error fetching Petfinder token:', error.message)
@@ -30,19 +36,14 @@ async function fetchPetfinderToken() {
 
 async function getRandomPet() {
   try {
-    const config = {
+    const response = await fetch(`${ANIMALS_URL}?sort=random&limit=1`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      params: {
-        sort: 'random',
-        limit: 1,
-      },
-    }
-
-    const response = await axios.get(ANIMALS_URL, config)
-    if (response.data && response.data.animals && response.data.animals.length > 0) {
-      const pet = response.data.animals[0]
+    })
+    const data = await response.json()
+    if (data && data.animals && data.animals.length > 0) {
+      const pet = data.animals[0]
 
       if (!pet.contact.address.city || !pet.contact.address.state) {
         // eslint-disable-next-line no-console
