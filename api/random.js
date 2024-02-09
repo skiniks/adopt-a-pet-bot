@@ -1,5 +1,7 @@
-import { Buffer } from 'node:buffer'
-import { AppBskyFeedPost, BskyAgent, RichText } from '@atproto/api'
+import pkg from '@atproto/api'
+import request from 'superagent'
+
+const { BskyAgent, AppBskyFeedPost, RichText } = pkg
 
 const PETFINDER_API_KEY = process.env.PETFINDER_API_KEY
 const PETFINDER_SECRET = process.env.PETFINDER_SECRET
@@ -101,11 +103,8 @@ async function getRandomPet(attempt = 0) {
 
 async function getImageAsBuffer(imageUrl) {
   try {
-    const response = await fetch(imageUrl)
-    if (!response.ok)
-      throw new Error(`HTTP error! status: ${response.status}`)
-    const arrayBuffer = await response.arrayBuffer()
-    return Buffer.from(arrayBuffer)
+    const res = await request.get(imageUrl).responseType('blob')
+    return res.body
   }
   catch (err) {
     console.error('Error fetching the image as a buffer:', err)

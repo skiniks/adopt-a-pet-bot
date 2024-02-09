@@ -6,7 +6,8 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@atproto/api": "^0.9.6"
+    "@atproto/api": "^0.9.6",
+    "superagent": "^8.1.2"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.6.4",
