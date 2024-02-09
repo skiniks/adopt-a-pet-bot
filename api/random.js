@@ -1,6 +1,5 @@
+import { Buffer } from 'node:buffer'
 import pkg from '@atproto/api'
-
-const { Buffer } = require('node:buffer')
 
 const { BskyAgent, AppBskyFeedPost, RichText } = pkg
 
