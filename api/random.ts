@@ -146,9 +146,7 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
     for (const buffer of imageBuffers) {
       if (buffer) {
         const imageBlobResponse = await agent.uploadBlob(buffer, { encoding: 'image/jpeg' })
-        const blobRefString = imageBlobResponse.data.blob.ref.toString()
-        console.log('Image uploaded:', blobRefString)
-        imageBlobRefs.push(blobRefString)
+        imageBlobRefs.push(imageBlobResponse.blobRef)
       }
       else {
         console.error('Failed to retrieve an image buffer.')
@@ -175,13 +173,12 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
     await rt.detectFacets(agent)
 
     const imagesEmbed = imageBlobRefs.map((blobRef) => {
+      const altText = `${formattedName} is a ${breedStr} ${petDetails.species.toLowerCase()}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`
+
       return {
         $type: 'app.bsky.embed.image',
-        image: {
-          $ref: blobRef,
-          mimeType: 'image/jpeg',
-        },
-        alt: `${formattedName} is a ${breedStr} ${petDetails.species.toLowerCase()}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`,
+        image: blobRef,
+        alt: altText,
       }
     })
 
@@ -218,18 +215,17 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
 
 export default async (_req: any, res: any) => {
   try {
-    await fetchPetfinderToken()
-    await getRandomPet()
-    res.status(200).json({ success: true })
-  }
-  catch (error) {
+    await fetchPetfinderToken();
+    await getRandomPet();
+    res.status(200).json({ success: true });
+  } catch (error) {
     if (error instanceof Error) {
-      console.log(error.message)
-      res.status(500).json({ success: false, message: error.message })
-    }
-    else {
-      console.log('An unknown error occurred')
-      res.status(500).json({ success: false, message: 'An unknown error occurred' })
+      console.log(error.message);
+      res.status(500).json({ success: false, message: error.message });
+    } else {
+      console.log('An unknown error occurred');
+      res.status(500).json({ success: false, message: 'An unknown error occurred' });
     }
   }
-}
+};
+
