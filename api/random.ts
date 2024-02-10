@@ -3,6 +3,7 @@ import { AppBskyFeedPost, BskyAgent, RichText } from '@atproto/api'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { ANIMALS_URL, BSKY_PASSWORD, BSKY_USERNAME, PETFINDER_API_KEY, PETFINDER_SECRET, TOKEN_URL } from '../config'
 import type { Pet, PetDetails, PetFinderTokenResponse } from '../types'
+import { getRandomIntro } from '../utils/intros'
 
 let token: string = ''
 
@@ -90,22 +91,6 @@ async function getImageAsBuffer(imageUrl: string): Promise<Buffer | null> {
     console.error('Error fetching the image as a buffer:', err)
     return null
   }
-}
-
-function getRandomIntro() {
-  const intros = [
-    'Meet your new best friend,',
-    'Looking for a companion? Say hello to,',
-    'Ready to open your heart and home? Introducing,',
-    'This furry friend is in search of a forever home:',
-    'Your future companion awaits! Meet',
-    'Discover your next family member:',
-    'Add a little paw-sitivity to your life with',
-    'A bundle of joy named',
-    'Could this be your new cuddle buddy?',
-    'Find a place in your heart for',
-  ]
-  return intros[Math.floor(Math.random() * intros.length)]
 }
 
 async function createPost(petDetails: PetDetails): Promise<boolean> {
