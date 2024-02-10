@@ -220,7 +220,13 @@ export default async (_req: any, res: any) => {
     res.status(200).json({ success: true })
   }
   catch (error) {
-    console.log(error)
-    res.status(500).json({ success: false, error: error.message })
+    if (error instanceof Error) {
+      console.log(error.message)
+      res.status(500).json({ success: false, message: error.message })
+    }
+    else {
+      console.log('An unknown error occurred')
+      res.status(500).json({ success: false, message: 'An unknown error occurred' })
+    }
   }
 }
