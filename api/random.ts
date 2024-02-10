@@ -88,6 +88,22 @@ async function getImageAsBuffer(imageUrl: string): Promise<Buffer | null> {
   }
 }
 
+function getRandomIntro() {
+  const intros = [
+    'Meet your new best friend,',
+    'Looking for a companion? Say hello to,',
+    'Ready to open your heart and home? Introducing,',
+    'This furry friend is in search of a forever home:',
+    'Your future companion awaits! Meet',
+    'Discover your next family member:',
+    'Add a little paw-sitivity to your life with',
+    'A bundle of joy named',
+    'Could this be your new cuddle buddy?',
+    'Find a place in your heart for',
+  ]
+  return intros[Math.floor(Math.random() * intros.length)]
+}
+
 async function createPost(petDetails: PetDetails): Promise<boolean> {
   try {
     const agent = new BskyAgent({ service: 'https://bsky.social' })
@@ -121,7 +137,8 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
       breedStr += ' mix'
 
     const formattedName = petDetails.name.trim().replace(/\s+,/, ',')
-    const postText = `Meet ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${petDetails.url}`
+    const introSentence = getRandomIntro()
+    const postText = `${introSentence} ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${petDetails.url}`
 
     const rt = new RichText({ text: postText })
     await rt.detectFacets(agent)
