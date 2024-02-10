@@ -129,18 +129,21 @@ interface PetDetails {
 
 async function createPost(petDetails: PetDetails): Promise<boolean> {
   try {
-    const agent = new BskyAgent({ service: 'https://bsky.social' });
-    await agent.login({ identifier: BSKY_USERNAME!, password: BSKY_PASSWORD! });
+    const agent = new BskyAgent({ service: 'https://bsky.social' })
+    await agent.login({ identifier: BSKY_USERNAME!, password: BSKY_PASSWORD! })
 
-    const imageBuffers: (Uint8Array | null)[] = await Promise.all(petDetails.photoUrls.map(getImageAsBuffer));
-    const imageBlobRefs: string[] = [];
+    const imageBuffers: (Uint8Array | null)[] = await Promise.all(petDetails.photoUrls.map(getImageAsBuffer))
+    const imageBlobRefs: string[] = []
 
     for (const buffer of imageBuffers) {
       if (buffer) {
-        const imageBlobResponse = await agent.uploadBlob(buffer, { encoding: 'image/jpeg' });
-        console.log('Image blob response:', JSON.stringify(imageBlobResponse, null, 2))
-      } else {
-        console.error('Failed to retrieve an image buffer.');
+        const imageBlobResponse = await agent.uploadBlob(buffer, { encoding: 'image/jpeg' })
+        const cid = imageBlobResponse.data.blob.ref.$link
+        console.log('Extracted CID:', cid)
+        imageBlobRefs.push(cid)
+      }
+      else {
+        console.error('Failed to retrieve an image buffer.')
       }
     }
 
