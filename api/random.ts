@@ -92,6 +92,7 @@ async function getRandomPet(): Promise<void> {
       const pet: Pet = data.animals[0]
 
       if (!pet.contact.address.city || !pet.contact.address.state) {
+        // eslint-disable-next-line no-console
         console.log('Pet does not have city and state. Trying another one...')
         await getRandomPet()
         return
@@ -113,11 +114,13 @@ async function getRandomPet(): Promise<void> {
       })
 
       if (!postSuccess) {
+        // eslint-disable-next-line no-console
         console.log('Failed to create a post with current pet. Trying another one...')
         await getRandomPet()
       }
     }
     else {
+      // eslint-disable-next-line no-console
       console.log('No pets found.')
     }
   }
@@ -200,6 +203,7 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
       const res = AppBskyFeedPost.validateRecord(postRecord)
       if (res.success) {
         await agent.post(postRecord)
+        // eslint-disable-next-line no-console
         console.log('Post successful')
         return true
       }
@@ -224,10 +228,12 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   }
   catch (error) {
     if (error instanceof Error) {
+      // eslint-disable-next-line no-console
       console.log(error.message)
       res.status(500).json({ success: false, message: error.message })
     }
     else {
+      // eslint-disable-next-line no-console
       console.log('An unknown error occurred')
       res.status(500).json({ success: false, message: 'An unknown error occurred' })
     }
