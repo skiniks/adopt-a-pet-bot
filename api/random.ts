@@ -100,19 +100,13 @@ async function getRandomPet(): Promise<void> {
 
 async function getImageAsBuffer(imageUrl: string): Promise<Uint8Array | null> {
   try {
-    const response = await request.get(imageUrl).responseType('blob')
-    const blob: Blob = response.body
-    const arrayBuffer: ArrayBuffer = await new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onloadend = () => resolve(reader.result as ArrayBuffer)
-      reader.onerror = reject
-      reader.readAsArrayBuffer(blob)
-    })
-    return new Uint8Array(arrayBuffer)
-  }
-  catch (err: any) {
-    console.error('Error fetching the image as a buffer:', err)
-    return null
+    const response = await request.get(imageUrl).responseType('arraybuffer');
+    const buffer = response.body;
+
+    return new Uint8Array(buffer);
+  } catch (err: any) {
+    console.error('Error fetching the image as a buffer:', err);
+    return null;
   }
 }
 
