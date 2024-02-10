@@ -129,29 +129,18 @@ interface PetDetails {
 
 async function createPost(petDetails: PetDetails): Promise<boolean> {
   try {
-    const agent = new BskyAgent({ service: 'https://bsky.social' })
-    await agent.login({ identifier: BSKY_USERNAME!, password: BSKY_PASSWORD! })
+    const agent = new BskyAgent({ service: 'https://bsky.social' });
+    await agent.login({ identifier: BSKY_USERNAME!, password: BSKY_PASSWORD! });
 
-    const imageBuffers: (Uint8Array | null)[] = await Promise.all(
-      petDetails.photoUrls.slice(0, 4).map(url => getImageAsBuffer(url)),
-    )
-
-    const imageBlobRefs: string[] = []
+    const imageBuffers: (Uint8Array | null)[] = await Promise.all(petDetails.photoUrls.map(getImageAsBuffer));
+    const imageBlobRefs: string[] = [];
 
     for (const buffer of imageBuffers) {
       if (buffer) {
-        // Log to confirm data type and content
-        console.log('Buffer type:', typeof buffer)
-        console.log('Buffer content:', buffer.slice(0, 30)) // Log a portion of the buffer for inspection
-
-        // Since the API expects a Uint8Array or string, ensure buffer is correctly typed
-        const imageBlobResponse = await agent.uploadBlob(buffer, { encoding: 'image/jpeg' })
-
-        // Assuming `imageBlobResponse.data.blob` gives you a BlobRef, handle it appropriately
-        console.log('Upload response:', imageBlobResponse)
-      }
-      else {
-        console.error('Failed to retrieve an image buffer.')
+        const imageBlobResponse = await agent.uploadBlob(buffer, { encoding: 'image/jpeg' });
+        console.log('Image blob response:', JSON.stringify(imageBlobResponse, null, 2))
+      } else {
+        console.error('Failed to retrieve an image buffer.');
       }
     }
 
