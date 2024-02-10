@@ -137,20 +137,21 @@ async function getImageAsBuffer(imageUrl: string): Promise<Buffer | null> {
 
 async function createPost(petDetails: PetDetails): Promise<boolean> {
   try {
-    const agent = new BskyAgent({ service: 'https://bsky.social' });
-    await agent.login({ identifier: BSKY_USERNAME, password: BSKY_PASSWORD });
+    const agent = new BskyAgent({ service: 'https://bsky.social' })
+    await agent.login({ identifier: BSKY_USERNAME, password: BSKY_PASSWORD })
 
-    const imageBuffers = await Promise.all(petDetails.photoUrls.slice(0, 4).map(url => getImageAsBuffer(url)));
-    const imageBlobRefs: string[] = [];
+    const imageBuffers = await Promise.all(petDetails.photoUrls.slice(0, 4).map(url => getImageAsBuffer(url)))
+    const imageBlobRefs: string[] = []
 
     for (const buffer of imageBuffers) {
       if (buffer) {
-        const imageBlobResponse = await agent.uploadBlob(buffer, { encoding: 'image/jpeg' });
-        const blobRefString = imageBlobResponse.data.blob.ref.toString();
-        console.log('Image uploaded:', blobRefString);
-        imageBlobRefs.push(blobRefString);
-      } else {
-        console.error('Failed to retrieve an image buffer.');
+        const imageBlobResponse = await agent.uploadBlob(buffer, { encoding: 'image/jpeg' })
+        const blobRefString = imageBlobResponse.data.blob.ref.toString()
+        console.log('Image uploaded:', blobRefString)
+        imageBlobRefs.push(blobRefString)
+      }
+      else {
+        console.error('Failed to retrieve an image buffer.')
       }
     }
 
@@ -174,12 +175,13 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
     await rt.detectFacets(agent)
 
     const imagesEmbed = imageBlobRefs.map((blobRef) => {
-      const altText = `${formattedName} is a ${breedStr} ${petDetails.species.toLowerCase()}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`
-
       return {
         $type: 'app.bsky.embed.image',
-        image: blobRef,
-        alt: altText,
+        image: {
+          $ref: blobRef,
+          mimeType: 'image/jpeg',
+        },
+        alt: `${formattedName} is a ${breedStr} ${petDetails.species.toLowerCase()}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`,
       }
     })
 
