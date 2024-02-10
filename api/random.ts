@@ -138,6 +138,10 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
     for (const buffer of imageBuffers) {
       if (buffer) {
         const imageBlobResponse = await agent.uploadBlob(buffer, { encoding: 'image/jpeg' })
+        console.log('Blob response data:', imageBlobResponse.data);
+        console.log('Blob object:', imageBlobResponse.data.blob);
+        console.log('Ref object:', imageBlobResponse.data.blob.ref);
+
         const cid = imageBlobResponse.data.blob.ref.$link
         console.log('Extracted CID:', cid)
         imageBlobRefs.push(cid)
