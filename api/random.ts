@@ -204,7 +204,7 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
       if (res.success) {
         await agent.post(postRecord)
         // eslint-disable-next-line no-console
-        console.log('Post successful')
+        console.log('Post created successfully:', postRecord)
         return true
       }
       else {
