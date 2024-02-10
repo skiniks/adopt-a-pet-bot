@@ -2,60 +2,8 @@ import request from 'superagent'
 import type { BlobRef } from '@atproto/api'
 import { AppBskyFeedPost, BskyAgent, RichText } from '@atproto/api'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-
-interface Pet {
-  name: string
-  description: string
-  contact: {
-    address: {
-      city: string
-      state: string
-    }
-  }
-  species: string
-  age: string
-  url: string
-  photos: { large: string }[]
-  breeds: {
-    primary?: string
-    secondary?: string
-    mixed?: boolean
-    unknown?: boolean
-  }
-}
-
-interface PetFinderTokenResponse {
-  access_token: string
-}
-
-interface PetDetails {
-  name: string
-  description: string
-  contact: {
-    address: {
-      city: string
-      state: string
-    }
-  }
-  species: string
-  age: string
-  url: string
-  photoUrls: string[]
-  breeds: {
-    primary?: string
-    secondary?: string
-    mixed?: boolean
-    unknown?: boolean
-  }
-}
-
-const PETFINDER_API_KEY: string = process.env.PETFINDER_API_KEY || ''
-const PETFINDER_SECRET: string = process.env.PETFINDER_SECRET || ''
-const BSKY_USERNAME: string = process.env.BSKY_USERNAME || ''
-const BSKY_PASSWORD: string = process.env.BSKY_PASSWORD || ''
-
-const TOKEN_URL: string = 'https://api.petfinder.com/v2/oauth2/token'
-const ANIMALS_URL: string = 'https://api.petfinder.com/v2/animals'
+import { ANIMALS_URL, BSKY_PASSWORD, BSKY_USERNAME, PETFINDER_API_KEY, PETFINDER_SECRET, TOKEN_URL } from '@/config'
+import type { Pet, PetDetails, PetFinderTokenResponse } from '@/types'
 
 let token: string = ''
 
