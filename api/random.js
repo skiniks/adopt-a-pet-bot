@@ -1,37 +1,17 @@
 import request from 'superagent'
 import { AppBskyFeedPost, BskyAgent, RichText } from '@atproto/api'
 
-const PETFINDER_API_KEY: string | undefined = process.env.PETFINDER_API_KEY
-const PETFINDER_SECRET: string | undefined = process.env.PETFINDER_SECRET
-const BSKY_USERNAME: string | undefined = process.env.BSKY_USERNAME
-const BSKY_PASSWORD: string | undefined = process.env.BSKY_PASSWORD
+const PETFINDER_API_KEY = process.env.PETFINDER_API_KEY
+const PETFINDER_SECRET = process.env.PETFINDER_SECRET
+const BSKY_USERNAME = process.env.BSKY_USERNAME
+const BSKY_PASSWORD = process.env.BSKY_PASSWORD
 
-const TOKEN_URL: string = 'https://api.petfinder.com/v2/oauth2/token'
-const ANIMALS_URL: string = 'https://api.petfinder.com/v2/animals'
+const TOKEN_URL = 'https://api.petfinder.com/v2/oauth2/token'
+const ANIMALS_URL = 'https://api.petfinder.com/v2/animals'
 
-let token: string = ''
+let token = ''
 
-interface PetfinderTokenResponse {
-  access_token: string
-}
-
-interface Animal {
-  name: string
-  description: string
-  contact: any
-  species: string
-  age: string
-  url: string
-  photos: { large: string }[]
-  breeds: {
-    primary?: string
-    secondary?: string
-    mixed?: boolean
-    unknown?: boolean
-  }
-}
-
-async function fetchPetfinderToken(): Promise<void> {
+async function fetchPetfinderToken() {
   try {
     const response = await fetch(TOKEN_URL, {
       method: 'POST',
@@ -44,15 +24,15 @@ async function fetchPetfinderToken(): Promise<void> {
         client_secret: PETFINDER_SECRET,
       }),
     })
-    const data: PetfinderTokenResponse = await response.json()
+    const data = await response.json()
     token = data.access_token
   }
-  catch (error: any) {
+  catch (error) {
     console.error('Error fetching Petfinder token:', error.message)
   }
 }
 
-async function getRandomPet(): Promise<void> {
+async function getRandomPet() {
   try {
     const response = await fetch(`${ANIMALS_URL}?sort=random&limit=1`, {
       headers: {
@@ -61,19 +41,20 @@ async function getRandomPet(): Promise<void> {
     })
     const data = await response.json()
     if (data && data.animals && data.animals.length > 0) {
-      const pet: Animal = data.animals[0]
+      const pet = data.animals[0]
 
       if (!pet.contact.address.city || !pet.contact.address.state) {
+        // eslint-disable-next-line no-console
         console.log('Pet does not have city and state. Trying another one...')
         await getRandomPet()
         return
       }
 
-      let photoUrls: string[] = []
+      let photoUrls = []
       if (pet.photos && pet.photos.length > 0)
         photoUrls = pet.photos.map(photo => photo.large)
 
-      const postSuccess: boolean = await createPost({
+      const postSuccess = await createPost({
         name: pet.name,
         description: pet.description,
         contact: pet.contact,
@@ -85,70 +66,51 @@ async function getRandomPet(): Promise<void> {
       })
 
       if (!postSuccess) {
+        // eslint-disable-next-line no-console
         console.log('Failed to create a post with current pet. Trying another one...')
         await getRandomPet()
       }
     }
     else {
+      // eslint-disable-next-line no-console
       console.log('No pets found.')
     }
   }
-  catch (error: any) {
+  catch (error) {
     console.error('Error fetching a random pet:', error.message)
   }
 }
 
-async function getImageAsBuffer(url: string): Promise<Uint8Array | null> {
+async function getImageAsBuffer(imageUrl) {
   try {
-    const response = await request.get(url).responseType('arraybuffer')
-    const buffer: Buffer = Buffer.from(response.body)
-    return new Uint8Array(buffer)
+    const res = await request.get(imageUrl).responseType('blob')
+    return res.body
   }
-  catch (error: any) {
-    console.error('Error fetching image:', error.message)
+  catch (err) {
+    console.error('Error fetching the image as a buffer:', err)
     return null
   }
 }
 
-interface PetDetails {
-  name: string
-  description: string
-  contact: any
-  species: string
-  age: string
-  url: string
-  photoUrls: string[]
-  breeds: {
-    primary?: string
-    secondary?: string
-    mixed?: boolean
-    unknown?: boolean
-  }
-}
-
-async function createPost(petDetails: PetDetails): Promise<boolean> {
+async function createPost(petDetails) {
   try {
     const agent = new BskyAgent({ service: 'https://bsky.social' })
-    await agent.login({ identifier: BSKY_USERNAME!, password: BSKY_PASSWORD! })
+    await agent.login({ identifier: BSKY_USERNAME, password: BSKY_PASSWORD })
 
-    const imageBuffers: (Uint8Array | null)[] = await Promise.all(petDetails.photoUrls.map(getImageAsBuffer))
-    const imageBlobRefs: string[] = []
+    const imageBuffers = await Promise.all(petDetails.photoUrls.slice(0, 4).map(url => getImageAsBuffer(url)))
+    const imageBlobRefs = []
 
     for (const buffer of imageBuffers) {
       if (buffer) {
         const imageBlobResponse = await agent.uploadBlob(buffer, { encoding: 'image/jpeg' })
-        console.log('Blob response data:', imageBlobResponse.data)
-        console.log('Blob object:', imageBlobResponse.data.blob)
-        console.log('Ref object:', imageBlobResponse.data.blob.ref)
-
-        imageBlobRefs.push(imageBlobResponse.data.blob.ref)
+        imageBlobRefs.push(imageBlobResponse.data.blob)
       }
       else {
         console.error('Failed to retrieve an image buffer.')
       }
     }
 
-    let breedStr: string = ''
+    let breedStr = ''
     if (petDetails.breeds.primary) {
       breedStr = petDetails.breeds.primary
       if (petDetails.breeds.secondary)
@@ -161,20 +123,21 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
     if (petDetails.breeds.mixed && !breedStr.toLowerCase().includes('mix') && !breedStr.toLowerCase().includes('mixed breed'))
       breedStr += ' mix'
 
-    const formattedName: string = petDetails.name.trim().replace(/\s+,/, ',')
-    const postText: string = `Meet ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${petDetails.url}`
+    const formattedName = petDetails.name.trim().replace(/\s+,/, ',')
+    const postText = `Meet ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${petDetails.url}`
 
     const rt = new RichText({ text: postText })
     await rt.detectFacets(agent)
 
-    const imagesEmbed = imageBlobRefs.map(blobRef => ({
-      $type: 'app.bsky.embed.image',
-      image: {
-        $type: 'blob',
-        ref: blobRef,
-      },
-      alt: `${formattedName} is a ${breedStr} ${petDetails.species.toLowerCase()}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`
-    }));
+    const imagesEmbed = imageBlobRefs.map((blobRef) => {
+      const altText = `${formattedName} is a ${breedStr} ${petDetails.species.toLowerCase()}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`
+
+      return {
+        $type: 'app.bsky.embed.image',
+        image: blobRef,
+        alt: altText,
+      }
+    })
 
     const postRecord = {
       $type: 'app.bsky.feed.post',
@@ -191,7 +154,8 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
       const res = AppBskyFeedPost.validateRecord(postRecord)
       if (res.success) {
         const response = await agent.post(postRecord)
-        console.log('Post creation response:', JSON.stringify(response, null, 2))
+        // eslint-disable-next-line no-console
+        console.log('Post successful:', response)
         return true
       }
       else {
@@ -200,20 +164,20 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
       }
     }
   }
-  catch (err: any) {
+  catch (err) {
     console.error('Error creating post:', err)
     return false
   }
-  return false
 }
 
-export default async (_req: any, res: any): Promise<void> => {
+export default async (_req, res) => {
   try {
     await fetchPetfinderToken()
     await getRandomPet()
     res.status(200).json({ success: true })
   }
-  catch (error: any) {
+  catch (error) {
+    // eslint-disable-next-line no-console
     console.log(error)
     res.status(500).json({ success: false, message: error.message })
   }
