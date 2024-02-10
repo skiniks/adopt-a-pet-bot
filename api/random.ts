@@ -172,15 +172,16 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
     const rt = new RichText({ text: postText })
     await rt.detectFacets(agent)
 
-    const imagesEmbed = imageBlobRefs.map((blobRef) => {
-      const altText = `${formattedName} is a ${breedStr} ${petDetails.species.toLowerCase()}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`
-
+    const imagesEmbed = imageBlobRefs.map(blobRef => {
       return {
         $type: 'app.bsky.embed.image',
-        image: blobRef,
-        alt: altText,
-      }
-    })
+        image: {
+          $ref: blobRef,
+        },
+        alt: `${formattedName} is a ${breedStr} ${petDetails.species.toLowerCase()}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`
+      };
+    });
+
 
     const postRecord: AppBskyFeedPost.Record = {
       $type: 'app.bsky.feed.post',
