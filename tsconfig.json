@@ -1,14 +1,8 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "baseUrl": ".",
     "module": "NodeNext",
     "moduleResolution": "nodenext",
-    "paths": {
-      "@/*": [
-        "./*"
-      ]
-    },
     "strict": true,
     "noImplicitAny": false,
     "allowSyntheticDefaultImports": true,

@@ -2,8 +2,8 @@ import request from 'superagent'
 import type { BlobRef } from '@atproto/api'
 import { AppBskyFeedPost, BskyAgent, RichText } from '@atproto/api'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { ANIMALS_URL, BSKY_PASSWORD, BSKY_USERNAME, PETFINDER_API_KEY, PETFINDER_SECRET, TOKEN_URL } from '@/config'
-import type { Pet, PetDetails, PetFinderTokenResponse } from '@/types'
+import { ANIMALS_URL, BSKY_PASSWORD, BSKY_USERNAME, PETFINDER_API_KEY, PETFINDER_SECRET, TOKEN_URL } from '../config'
+import type { Pet, PetDetails, PetFinderTokenResponse } from '../types'
 
 let token: string = ''
 
