@@ -149,7 +149,6 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
         const blobRefString = imageBlobResponse.data.blob.ref.toString();
         console.log('Image uploaded:', blobRefString);
         imageBlobRefs.push(blobRefString);
-        console.log('Image uploaded:', blobRefString);
       } else {
         console.error('Failed to retrieve an image buffer.');
       }
