@@ -137,19 +137,21 @@ async function getImageAsBuffer(imageUrl: string): Promise<Buffer | null> {
 
 async function createPost(petDetails: PetDetails): Promise<boolean> {
   try {
-    const agent = new BskyAgent({ service: 'https://bsky.social' })
-    await agent.login({ identifier: BSKY_USERNAME, password: BSKY_PASSWORD })
+    const agent = new BskyAgent({ service: 'https://bsky.social' });
+    await agent.login({ identifier: BSKY_USERNAME, password: BSKY_PASSWORD });
 
-    const imageBuffers = await Promise.all(petDetails.photoUrls.slice(0, 4).map(url => getImageAsBuffer(url)))
-    const imageBlobRefs: string[] = []
+    const imageBuffers = await Promise.all(petDetails.photoUrls.slice(0, 4).map(url => getImageAsBuffer(url)));
+    const imageBlobRefs: string[] = [];
 
     for (const buffer of imageBuffers) {
       if (buffer) {
-        const imageBlobResponse = await agent.uploadBlob(buffer, { encoding: 'image/jpeg' })
-        console.log('Blob response:', imageBlobResponse.data.blob) // Log the blob object
-      }
-      else {
-        console.error('Failed to retrieve an image buffer.')
+        const imageBlobResponse = await agent.uploadBlob(buffer, { encoding: 'image/jpeg' });
+        const blobRefString = imageBlobResponse.data.blob.ref.toString();
+        console.log('Image uploaded:', blobRefString);
+        imageBlobRefs.push(blobRefString);
+        console.log('Image uploaded:', blobRefString);
+      } else {
+        console.error('Failed to retrieve an image buffer.');
       }
     }
 
