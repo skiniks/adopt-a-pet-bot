@@ -100,13 +100,14 @@ async function getRandomPet(): Promise<void> {
 
 async function getImageAsBuffer(imageUrl: string): Promise<Uint8Array | null> {
   try {
-    const response = await request.get(imageUrl).responseType('arraybuffer');
-    const buffer = response.body;
+    const response = await request.get(imageUrl).responseType('arraybuffer')
+    const buffer = response.body
 
-    return new Uint8Array(buffer);
-  } catch (err: any) {
-    console.error('Error fetching the image as a buffer:', err);
-    return null;
+    return new Uint8Array(buffer)
+  }
+  catch (err: any) {
+    console.error('Error fetching the image as a buffer:', err)
+    return null
   }
 }
 
@@ -198,7 +199,7 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
       const res = AppBskyFeedPost.validateRecord(postRecord)
       if (res.success) {
         const response = await agent.post(postRecord)
-        console.log('Post successful:', response)
+        console.log('Post creation response:', JSON.stringify(response, null, 2))
         return true
       }
       else {
