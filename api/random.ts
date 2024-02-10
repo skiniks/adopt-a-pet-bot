@@ -98,15 +98,14 @@ async function getRandomPet(): Promise<void> {
   }
 }
 
-async function getImageAsBuffer(imageUrl: string): Promise<Uint8Array | null> {
+async function getImageAsBuffer(url: string): Promise<Uint8Array | null> {
   try {
-    const response = await request.get(imageUrl).responseType('arraybuffer')
-    const buffer = response.body
-
+    const response = await request.get(url).responseType('arraybuffer')
+    const buffer: Buffer = Buffer.from(response.body)
     return new Uint8Array(buffer)
   }
-  catch (err: any) {
-    console.error('Error fetching the image as a buffer:', err)
+  catch (error: any) {
+    console.error('Error fetching image:', error.message)
     return null
   }
 }
@@ -142,9 +141,7 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
         console.log('Blob object:', imageBlobResponse.data.blob)
         console.log('Ref object:', imageBlobResponse.data.blob.ref)
 
-        const cidString = imageBlobResponse.data.blob.ref.toString()
-        console.log('Extracted CID String:', cidString)
-        imageBlobRefs.push(cidString)
+        imageBlobRefs.push(imageBlobResponse.data.blob.ref)
       }
       else {
         console.error('Failed to retrieve an image buffer.')
@@ -170,15 +167,14 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
     const rt = new RichText({ text: postText })
     await rt.detectFacets(agent)
 
-    const imagesEmbed = imageBlobRefs.map((blobRef) => {
-      const altText: string = `${formattedName} is a ${breedStr} ${petDetails.species.toLowerCase()}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`
-
-      return {
-        $type: 'app.bsky.embed.image',
-        image: blobRef,
-        alt: altText,
-      }
-    })
+    const imagesEmbed = imageBlobRefs.map(blobRef => ({
+      $type: 'app.bsky.embed.image',
+      image: {
+        $type: 'blob',
+        ref: blobRef,
+      },
+      alt: `${formattedName} is a ${breedStr} ${petDetails.species.toLowerCase()}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`
+    }));
 
     const postRecord = {
       $type: 'app.bsky.feed.post',
