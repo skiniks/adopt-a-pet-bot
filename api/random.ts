@@ -174,7 +174,7 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
   return false
 }
 
-export default async function (req: VercelRequest, res: VercelResponse): Promise<void> {
+export default async function (_req: VercelRequest, res: VercelResponse): Promise<void> {
   try {
     await fetchPetfinderToken()
     await getRandomPet()
