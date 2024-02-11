@@ -4,13 +4,9 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { ANIMALS_URL, BSKY_PASSWORD, BSKY_USERNAME, PETFINDER_API_KEY, PETFINDER_SECRET, TOKEN_URL } from '../config'
 import type { Pet, PetDetails, PetFinderTokenResponse } from '../types'
 import { getRandomIntro } from '../utils/intros'
+import { shortenUrl } from '../utils/shortenUrl'
 
 let token: string = ''
-
-function shortenUrl(url: string, delimiter: string): string {
-  const endIndex = url.indexOf(delimiter)
-  return endIndex !== -1 ? url.substring(0, endIndex) : url
-}
 
 async function fetchPetfinderToken(): Promise<void> {
   try {
