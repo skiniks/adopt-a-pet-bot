@@ -7,6 +7,11 @@ import { getRandomIntro } from '../utils/intros'
 
 let token: string = ''
 
+function shortenUrl(url: string, delimiter: string): string {
+  const endIndex = url.indexOf(delimiter)
+  return endIndex !== -1 ? url.substring(0, endIndex) : url
+}
+
 async function fetchPetfinderToken(): Promise<void> {
   try {
     const response = await fetch(TOKEN_URL, {
@@ -130,9 +135,11 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
     if (petDetails.breeds.mixed && !breedStr.toLowerCase().includes('mix') && !breedStr.toLowerCase().includes('mixed breed'))
       breedStr += ' mix'
 
+    const shortUrl = shortenUrl(petDetails.url, '?referrer_id=')
+
     const formattedName = petDetails.name.trim().replace(/\s+,/, ',')
     const introSentence = getRandomIntro()
-    const postText = `${introSentence} ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${petDetails.url}`
+    const postText = `${introSentence} ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${shortUrl}`
 
     const rt = new RichText({ text: postText })
     await rt.detectFacets(agent)
