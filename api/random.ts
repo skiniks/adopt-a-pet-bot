@@ -39,6 +39,13 @@ async function getRandomPet(): Promise<void> {
     if (data && data.animals && data.animals.length > 0) {
       const pet: Pet = data.animals[0]
 
+      if (!pet.photos || pet.photos.length === 0) {
+        // eslint-disable-next-line no-console
+        console.log('Pet does not have photos. Trying another one...')
+        await getRandomPet()
+        return
+      }
+
       if (!pet.contact.address.city || !pet.contact.address.state) {
         // eslint-disable-next-line no-console
         console.log('Pet does not have city and state. Trying another one...')
@@ -46,9 +53,7 @@ async function getRandomPet(): Promise<void> {
         return
       }
 
-      let photoUrls: string[] = []
-      if (pet.photos && pet.photos.length > 0)
-        photoUrls = pet.photos.map(photo => photo.large)
+      const photoUrls: string[] = pet.photos.map(photo => photo.large)
 
       const postSuccess = await createPost({
         name: pet.name,
