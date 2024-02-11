@@ -102,7 +102,7 @@ async function getImageAsBuffer(imageUrl: string): Promise<Buffer | null> {
 async function createPost(petDetails: PetDetails): Promise<boolean> {
   try {
     const agent = new BskyAgent({ service: 'https://bsky.social' })
-    await agent.login({ identifier: BSKY_USERNAME, password: BSKY_PASSWORD })
+    await agent.login({ identifier: BSKY_USERNAME!, password: BSKY_PASSWORD! })
 
     const imageBuffers = await Promise.all(petDetails.photoUrls.slice(0, 4).map(url => getImageAsBuffer(url)))
     const imageBlobRefs: BlobRef[] = []
