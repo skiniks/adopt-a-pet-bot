@@ -1,6 +1,6 @@
 {
   "crons": [{
     "path": "/api/random",
-    "schedule": "*/10 * * * *"
+    "schedule": "*/30 * * * *"
   }]
 }
