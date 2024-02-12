@@ -132,7 +132,6 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
       breedStr += ' mix'
 
     const shortUrl = shortenUrl(petDetails.url, '?referrer_id=')
-
     const formattedName = petDetails.name.trim().replace(/\s+,/, ',')
     const introSentence = getRandomIntro()
     const postText = `${introSentence} ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${shortUrl}`
