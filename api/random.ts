@@ -118,18 +118,32 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
       }
     }
 
-    let breedStr = ''
-    if (petDetails.breeds.primary) {
-      breedStr = petDetails.breeds.primary
-      if (petDetails.breeds.secondary)
-        breedStr += ` and ${petDetails.breeds.secondary}`
-    }
-    else if (petDetails.breeds.unknown) {
-      breedStr = 'unknown breed'
+    const createAltText = (details) => {
+      let breedStr = details.breeds.primary || 'unknown breed'
+      if (details.breeds.secondary)
+        breedStr += ` and ${details.breeds.secondary}`
+      else if (details.breeds.mixed && !breedStr.toLowerCase().includes('mix'))
+        breedStr += ' mix'
+
+      let species = details.species.toLowerCase()
+      if (breedStr.toLowerCase().includes(species))
+        species = ''
+      else
+        species = `${species}, `
+
+      const location = `${details.contact.address.city}, ${details.contact.address.state}`
+      return `${details.name} is a ${breedStr} ${species}available for adoption in ${location}.`
     }
 
-    if (petDetails.breeds.mixed && !breedStr.toLowerCase().includes('mix') && !breedStr.toLowerCase().includes('mixed breed'))
-      breedStr += ' mix'
+    const imagesEmbed = imageBlobRefs.map((blobRef) => {
+      const altText = createAltText(petDetails)
+
+      return {
+        $type: 'app.bsky.embed.image',
+        image: blobRef,
+        alt: altText,
+      }
+    })
 
     const shortUrl = shortenUrl(petDetails.url, '?referrer_id=')
     const formattedName = petDetails.name.trim().replace(/\s+,/, ',')
@@ -138,16 +152,6 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
 
     const rt = new RichText({ text: postText })
     await rt.detectFacets(agent)
-
-    const imagesEmbed = imageBlobRefs.map((blobRef) => {
-      const altText = `${formattedName} is a ${breedStr} ${petDetails.species.toLowerCase()}, available for adoption in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.`
-
-      return {
-        $type: 'app.bsky.embed.image',
-        image: blobRef,
-        alt: altText,
-      }
-    })
 
     const postRecord: AppBskyFeedPost.Record = {
       $type: 'app.bsky.feed.post',
