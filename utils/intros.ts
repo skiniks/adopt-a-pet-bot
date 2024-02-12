@@ -1,4 +1,4 @@
-export function getRandomIntro(): string {
+export function getRandomIntro(petName: string): string {
   const intros = [
     'Meet your new best friend,',
     'Looking for a companion? Say hello to,',
@@ -41,5 +41,10 @@ export function getRandomIntro(): string {
     'Meet the newest member of your family circle:',
     'Embrace the joy of unconditional love with,',
   ]
-  return intros[Math.floor(Math.random() * intros.length)]
+  const defaultIntro = 'Introducing a special friend in need of a loving home:'
+
+  if (/^\d/.test(petName))
+    return defaultIntro
+  else
+    return intros[Math.floor(Math.random() * intros.length)]
 }
