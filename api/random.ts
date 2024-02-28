@@ -147,7 +147,7 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
 
     const shortUrl = shortenUrl(petDetails.url, '?referrer_id=')
     const formattedName = petDetails.name.trim().replace(/\s+,/, ',')
-    const introSentence = getRandomIntro(petDetails.name)
+    const introSentence = getRandomIntro(petDetails.name, petDetails.species)
     const postText = `${introSentence} ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${shortUrl}`
 
     const rt = new RichText({ text: postText })
