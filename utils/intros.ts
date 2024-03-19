@@ -67,12 +67,43 @@ export function getRandomIntro(petName: string, species: string): string {
     ],
   }
 
+  const specificIntros = {
+    'rabbit': [
+      'Hop into happiness with a furry friend named,',
+      'Let the fun begin with every hop! Meet,',
+      'Ready for some bunny to love? Say hello to,',
+      'Your garden of joy awaits with,',
+      'Discover the joy of hoppy moments with,',
+    ],
+    'small-furry': [
+      'Add a little whisker of joy to your life with,',
+      'Tiny paws, big heart! Meet,',
+      'Your pocket-sized companion awaits:',
+      'Let the little wonders of life cheer you up with,',
+      'Find joy in the little things with,',
+    ],
+    'horse': [
+      'Gallop into a new friendship with,',
+      'Ready to ride into the sunset? Meet,',
+      'Your majestic companion awaits:',
+      'Embrace the joy of open fields and companionship with,',
+      'Begin a journey of friendship and adventure with,',
+    ],
+    'bird': [
+      'Let your heart soar with the wings of,',
+      'A melody of joy awaits you with,',
+      'Your feathered friend and song companion awaits:',
+      'Unlock a world of songs and companionship with,',
+      'Experience the joy of feathered melodies with,',
+    ],
+  }
+
   const speciesLower = species.toLowerCase()
   let intros
-  if (speciesLower === 'dog')
-    intros = [...generalIntros, ...dogCatIntros.dog]
-  else if (speciesLower === 'cat')
-    intros = [...generalIntros, ...dogCatIntros.cat]
+  if (dogCatIntros[speciesLower])
+    intros = [...generalIntros, ...dogCatIntros[speciesLower]]
+  else if (specificIntros[speciesLower])
+    intros = [...generalIntros, ...specificIntros[speciesLower]]
   else intros = generalIntros
 
   return intros[Math.floor(Math.random() * intros.length)]
