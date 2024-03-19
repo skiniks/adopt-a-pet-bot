@@ -44,8 +44,8 @@ export function getRandomIntro(petName: string, species: string): string {
     'Embrace the joy of unconditional love with,',
   ]
 
-  const dogCatIntros = {
-    dog: [
+  const speciesIntros = {
+    'dog': [
       'Add a little paw-sitivity to your life with',
       'Paws what you\'re doing and meet',
       'Your couch companion and adventure ally awaits:',
@@ -55,7 +55,7 @@ export function getRandomIntro(petName: string, species: string): string {
       'Say hello to your new partner in play:',
       'Get ready to fall in love with every wag of,',
     ],
-    cat: [
+    'cat': [
       'Add a little purr-sonality to your home with',
       'Pause for a moment and meet,',
       'Your lap warmer and quiet companion awaits:',
@@ -65,9 +65,6 @@ export function getRandomIntro(petName: string, species: string): string {
       'Say hello to your new cozy companion:',
       'Get ready to fall in love with every purr of,',
     ],
-  }
-
-  const specificIntros = {
     'rabbit': [
       'Hop into happiness with a furry friend named,',
       'Let the fun begin with every hop! Meet,',
@@ -99,12 +96,10 @@ export function getRandomIntro(petName: string, species: string): string {
   }
 
   const speciesLower = species.toLowerCase()
-  let intros
-  if (dogCatIntros[speciesLower])
-    intros = [...generalIntros, ...dogCatIntros[speciesLower]]
-  else if (specificIntros[speciesLower])
-    intros = [...generalIntros, ...specificIntros[speciesLower]]
-  else intros = generalIntros
+  let intros = [...generalIntros]
+
+  if (speciesIntros[speciesLower])
+    intros = intros.concat(speciesIntros[speciesLower])
 
   return intros[Math.floor(Math.random() * intros.length)]
 }
