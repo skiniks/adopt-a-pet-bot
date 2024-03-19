@@ -1,7 +1,7 @@
 export function getRandomIntro(petName: string, species: string): string {
   const defaultIntro = 'Introducing a special friend in need of a loving home:'
 
-  if (/^\d/.test(petName))
+  if (/^\d/.test(petName) || /\D\d/.test(petName))
     return defaultIntro
 
   const generalIntros = [
@@ -44,18 +44,36 @@ export function getRandomIntro(petName: string, species: string): string {
     'Embrace the joy of unconditional love with,',
   ]
 
-  const dogCatIntros = [
-    'Add a little paw-sitivity to your life with',
-    'Paws what you\'re doing and meet',
-    'Your couch companion and adventure ally awaits:',
-    'Unlock endless joy and companionship with,',
-    'Step into a world of love and licks with,',
-    'Let the purrs and tail wags begin! Meet,',
-    'Say hello to your new partner in cuddles:',
-    'Get ready to fall in love with every wag and purr of,',
-  ]
+  const dogCatIntros = {
+    dog: [
+      'Add a little paw-sitivity to your life with',
+      'Paws what you\'re doing and meet',
+      'Your couch companion and adventure ally awaits:',
+      'Unlock endless joy and companionship with,',
+      'Step into a world of love and licks with,',
+      'Let the tail wags and adventures begin! Meet,',
+      'Say hello to your new partner in play:',
+      'Get ready to fall in love with every wag of,',
+    ],
+    cat: [
+      'Add a little purr-sonality to your home with',
+      'Pause for a moment and meet,',
+      'Your lap warmer and quiet companion awaits:',
+      'Unlock endless purrs and companionship with,',
+      'Step into a world of love and gentle purrs with,',
+      'Let the purrs and playful moments begin! Meet,',
+      'Say hello to your new cozy companion:',
+      'Get ready to fall in love with every purr of,',
+    ],
+  }
 
-  const intros = (species.toLowerCase() === 'dog' || species.toLowerCase() === 'cat') ? [...generalIntros, ...dogCatIntros] : generalIntros
+  const speciesLower = species.toLowerCase()
+  let intros
+  if (speciesLower === 'dog')
+    intros = [...generalIntros, ...dogCatIntros.dog]
+  else if (speciesLower === 'cat')
+    intros = [...generalIntros, ...dogCatIntros.cat]
+  else intros = generalIntros
 
   return intros[Math.floor(Math.random() * intros.length)]
 }
