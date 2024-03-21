@@ -5,6 +5,7 @@ import { ANIMALS_URL, BSKY_PASSWORD, BSKY_USERNAME, PETFINDER_API_KEY, PETFINDER
 import type { Pet, PetDetails, PetFinderTokenResponse } from '../types'
 import { getRandomIntro } from '../utils/intros'
 import { shortenUrl } from '../utils/shortenUrl'
+import { decodeHtmlEntities } from '../utils/decodeHtmlentities'
 
 let token: string = ''
 
@@ -104,6 +105,10 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
     const agent = new BskyAgent({ service: 'https://bsky.social' })
     await agent.login({ identifier: BSKY_USERNAME!, password: BSKY_PASSWORD! })
 
+    petDetails.name = decodeHtmlEntities(petDetails.name)
+    if (petDetails.description)
+      petDetails.description = decodeHtmlEntities(petDetails.description)
+
     const imageBuffers = await Promise.all(petDetails.photoUrls.slice(0, 4).map(url => getImageAsBuffer(url)))
     const imageBlobRefs: BlobRef[] = []
 
@@ -128,8 +133,7 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
       let species = details.species.toLowerCase()
       if (breedStr.toLowerCase().includes(species))
         species = ''
-      else
-        species = `${species}, `
+      else species = `${species}, `
 
       const location = `${details.contact.address.city}, ${details.contact.address.state}`
       return `${details.name} is a ${breedStr} ${species}available for adoption in ${location}.`

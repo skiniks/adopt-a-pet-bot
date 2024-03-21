@@ -11,6 +11,7 @@
     "@types/node": "^20.11.30",
     "@vercel/node": "^3.0.24",
     "eslint": "^8.57.0",
+    "he": "^1.2.0",
     "typescript": "^5.4.2"
   }
 }
