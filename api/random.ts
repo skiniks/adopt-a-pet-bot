@@ -123,7 +123,7 @@ async function createPost(petDetails: PetDetails): Promise<boolean> {
       }
     }
 
-    const createAltText = (details) => {
+    const createAltText = (details: PetDetails) => {
       let breedStr = details.breeds.primary || 'unknown breed'
       if (details.breeds.secondary)
         breedStr += ` and ${details.breeds.secondary}`
