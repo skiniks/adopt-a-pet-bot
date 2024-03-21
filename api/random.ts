@@ -5,7 +5,7 @@ import { ANIMALS_URL, BSKY_PASSWORD, BSKY_USERNAME, PETFINDER_API_KEY, PETFINDER
 import type { Pet, PetDetails, PetFinderTokenResponse } from '../types'
 import { getRandomIntro } from '../utils/intros'
 import { shortenUrl } from '../utils/shortenUrl'
-import { decodeHtmlEntities } from '../utils/decodeHtmlentities'
+import { decodeHtmlEntities } from '../utils/decodeHtmlEntities'
 
 let token: string = ''
 
