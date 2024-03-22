@@ -1,6 +1,5 @@
 {
   "name": "adopt-a-pet-bot",
-  "type": "module",
   "private": true,
   "scripts": {
     "lint": "eslint .",
