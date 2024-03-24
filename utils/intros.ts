@@ -4,45 +4,45 @@ export function getRandomIntro(petName: string, species: string): string {
   if (/^\d/.test(petName) || /\D\d/.test(petName))
     return defaultIntro
 
-  const generalIntros = [
-    'Meet your new best friend,',
-    'Looking for a companion? Say hello to,',
-    'Ready to open your heart and home? Introducing,',
-    'This friend is in search of a forever home:',
-    'Your future companion awaits! Meet',
-    'Discover your next family member:',
-    'Add a little joy to your life with',
-    'A bundle of joy named',
-    'Could this be your new buddy?',
-    'Find a place in your heart for',
-    'Embrace the adventure of friendship with',
-    'Your next loyal friend could be',
-    'Imagine the possibilities with',
-    'Welcoming a new friend is a walk in the park with',
-    'Leap into a lifetime of love with',
-    'Let your heart be stolen by',
-    'Every journey begins with a single step: meet',
-    'Bringing love into your life:',
-    'Share your life with a soul named',
-    'Embark on a journey of companionship with,',
-    'Your home is just a hop, skip, and a jump away from,',
-    'Find your forever friend and adventure buddy:',
-    'Open your doors to a lifetime of companionship with,',
-    'Get ready to fall in love with,',
-    'Your next best friend is just a moment away:',
-    'Enrich your family with the love of,',
-    'Ready to make your heart a little bigger? Welcome,',
-    'The journey to unconditional love starts with,',
-    'Elevate your happiness with a friend named,',
-    'Your companion and ally awaits:',
-    'Unlock endless joy and companionship with,',
-    'Step into a world of love with,',
-    'Begin a new chapter of love and laughter with,',
-    'Your guide to endless adventures:',
-    'Let your life bloom with companionship and joy with,',
-    'Meet the newest member of your family circle:',
-    'Embrace the joy of unconditional love with,',
-  ]
+  // const generalIntros = [
+  //   'Meet your new best friend,',
+  //   'Looking for a companion? Say hello to,',
+  //   'Ready to open your heart and home? Introducing,',
+  //   'This friend is in search of a forever home:',
+  //   'Your future companion awaits! Meet',
+  //   'Discover your next family member:',
+  //   'Add a little joy to your life with',
+  //   'A bundle of joy named',
+  //   'Could this be your new buddy?',
+  //   'Find a place in your heart for',
+  //   'Embrace the adventure of friendship with',
+  //   'Your next loyal friend could be',
+  //   'Imagine the possibilities with',
+  //   'Welcoming a new friend is a walk in the park with',
+  //   'Leap into a lifetime of love with',
+  //   'Let your heart be stolen by',
+  //   'Every journey begins with a single step: meet',
+  //   'Bringing love into your life:',
+  //   'Share your life with a soul named',
+  //   'Embark on a journey of companionship with,',
+  //   'Your home is just a hop, skip, and a jump away from,',
+  //   'Find your forever friend and adventure buddy:',
+  //   'Open your doors to a lifetime of companionship with,',
+  //   'Get ready to fall in love with,',
+  //   'Your next best friend is just a moment away:',
+  //   'Enrich your family with the love of,',
+  //   'Ready to make your heart a little bigger? Welcome,',
+  //   'The journey to unconditional love starts with,',
+  //   'Elevate your happiness with a friend named,',
+  //   'Your companion and ally awaits:',
+  //   'Unlock endless joy and companionship with,',
+  //   'Step into a world of love with,',
+  //   'Begin a new chapter of love and laughter with,',
+  //   'Your guide to endless adventures:',
+  //   'Let your life bloom with companionship and joy with,',
+  //   'Meet the newest member of your family circle:',
+  //   'Embrace the joy of unconditional love with,',
+  // ]
 
   const speciesIntros = {
     'dog': [
@@ -96,7 +96,8 @@ export function getRandomIntro(petName: string, species: string): string {
   }
 
   const speciesLower = species.toLowerCase()
-  let intros = [...generalIntros]
+  // let intros = [...generalIntros]
+  let intros = []
 
   if (speciesIntros[speciesLower])
     intros = intros.concat(speciesIntros[speciesLower])
