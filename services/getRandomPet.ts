@@ -1,5 +1,5 @@
 import { ANIMALS_URL } from '../config'
-import { createPost } from '../services/bsky'
+import { createPost } from './bsky'
 
 interface Pet {
   name: string
