@@ -1,3 +1,8 @@
-import antfu from '@antfu/eslint-config'
+const antfu = require('@antfu/eslint-config').default
 
-export default antfu({ rules: { 'node/prefer-global/process': 'off', 'node/prefer-global/buffer': 'off' } })
+module.exports = antfu({
+  rules: {
+    'node/prefer-global/process': 'off',
+    'node/prefer-global/buffer': 'off',
+  },
+})
