@@ -6,13 +6,13 @@
     "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.8.3",
-    "@atproto/api": "^0.12.0",
+    "@antfu/eslint-config": "^2.9.0",
+    "@atproto/api": "^0.12.2",
     "@types/he": "^1.2.3",
     "@types/node": "^20.11.30",
     "@vercel/node": "^3.0.24",
     "eslint": "^8.57.0",
     "he": "^1.2.0",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.3"
   }
 }

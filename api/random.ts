@@ -8,7 +8,8 @@ export default async function handler(_req: VercelRequest, res: VercelResponse):
     const token = getToken()
     await getRandomPet(token)
     res.status(200).json({ success: true })
-  } catch (error) {
+  }
+  catch (error) {
     console.error('API Handler Error:', error)
     res.status(500).json({
       success: false,
