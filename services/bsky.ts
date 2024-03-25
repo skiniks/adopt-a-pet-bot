@@ -4,7 +4,7 @@ import { BSKY_PASSWORD, BSKY_USERNAME } from '../config'
 import { decodeHtmlEntities } from '../utils/decodeHtmlEntities'
 import { getImageAsBuffer } from '../utils/getImageAsBuffer'
 import { shortenUrl } from '../utils/shortenUrl'
-import { getRandomIntro } from '../utils/intros'
+import { getRandomIntro } from '../utils/getRandomIntro'
 
 interface PetDetails {
   name: string
