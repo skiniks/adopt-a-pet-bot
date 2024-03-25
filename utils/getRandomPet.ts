@@ -22,9 +22,7 @@ interface Pet {
   }
 }
 
-const token: string = ''
-
-export async function getRandomPet(): Promise<void> {
+export async function getRandomPet(token: string): Promise<void> {
   try {
     const response = await fetch(`${ANIMALS_URL}?sort=random&limit=1`, {
       headers: {
@@ -38,14 +36,14 @@ export async function getRandomPet(): Promise<void> {
       if (!pet.photos || pet.photos.length === 0) {
         // eslint-disable-next-line no-console
         console.log('Pet does not have photos. Trying another one...')
-        await getRandomPet()
+        await getRandomPet(token)
         return
       }
 
       if (!pet.contact.address.city || !pet.contact.address.state) {
         // eslint-disable-next-line no-console
         console.log('Pet does not have city and state. Trying another one...')
-        await getRandomPet()
+        await getRandomPet(token)
         return
       }
 
@@ -65,7 +63,7 @@ export async function getRandomPet(): Promise<void> {
       if (!postSuccess) {
         // eslint-disable-next-line no-console
         console.log('Failed to create a post with current pet. Trying another one...')
-        await getRandomPet()
+        await getRandomPet(token)
       }
     }
     else {

@@ -1,23 +1,18 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { fetchPetfinderToken } from '../utils/fetchPetfinderToken'
+import { fetchPetfinderToken, getToken } from '../utils/fetchPetfinderToken'
 import { getRandomPet } from '../utils/getRandomPet'
 
-export default async function (_req: VercelRequest, res: VercelResponse): Promise<void> {
+export default async function handler(_req: VercelRequest, res: VercelResponse): Promise<void> {
   try {
     await fetchPetfinderToken()
-    await getRandomPet()
+    const token = getToken()
+    await getRandomPet(token)
     res.status(200).json({ success: true })
-  }
-  catch (error) {
-    if (error instanceof Error) {
-      // eslint-disable-next-line no-console
-      console.log(error.message)
-      res.status(500).json({ success: false, message: error.message })
-    }
-    else {
-      // eslint-disable-next-line no-console
-      console.log('An unknown error occurred')
-      res.status(500).json({ success: false, message: 'An unknown error occurred' })
-    }
+  } catch (error) {
+    console.error('API Handler Error:', error)
+    res.status(500).json({
+      success: false,
+      message: error instanceof Error ? error.message : 'An unknown error occurred',
+    })
   }
 }
