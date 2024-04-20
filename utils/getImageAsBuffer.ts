@@ -1,3 +1,5 @@
+import { Buffer } from 'node:buffer'
+
 export async function getImageAsBuffer(imageUrl: string): Promise<Buffer | null> {
   try {
     const response = await fetch(imageUrl)

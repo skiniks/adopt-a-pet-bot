@@ -1,3 +1,5 @@
+import process from 'node:process'
+
 export const PETFINDER_API_KEY = process.env.PETFINDER_API_KEY
 export const PETFINDER_SECRET = process.env.PETFINDER_SECRET
 export const BSKY_USERNAME = process.env.BSKY_USERNAME
