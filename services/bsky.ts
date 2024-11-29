@@ -42,8 +42,7 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
     for (const buffer of imageBuffers) {
       if (buffer) {
         const imageBlobResponse = await agent.api.com.atproto.repo.uploadBlob(buffer, { encoding: 'image/jpeg' })
-        const imageBlobRef: BlobRef = imageBlobResponse.data.blob
-        imageBlobRefs.push(imageBlobRef)
+        imageBlobRefs.push(imageBlobResponse.data.blob)
       }
       else {
         console.error('Failed to retrieve an image buffer.')
@@ -52,9 +51,8 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
 
     const imagesEmbed = imageBlobRefs.map((blobRef) => {
       return {
-        $type: 'app.bsky.embed.images#image',
-        image: blobRef,
         alt: createAltText(petDetails),
+        image: blobRef,
       }
     })
 
