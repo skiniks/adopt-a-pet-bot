@@ -1,4 +1,5 @@
-import { AppBskyFeedPost, BskyAgent, RichText } from '@atproto/api'
+import type { BlobRef } from '@atproto/api'
+import { AppBskyFeedPost, AtpAgent, RichText } from '@atproto/api'
 import { BSKY_PASSWORD, BSKY_USERNAME } from '../config'
 import { decodeHtmlEntities } from '../utils/decodeHtmlEntities'
 import { getImageAsBuffer } from '../utils/getImageAsBuffer'
@@ -26,22 +27,9 @@ interface PetDetails {
   }
 }
 
-interface BskyImage {
-  $type: 'app.bsky.embed.images#image'
-  image: {
-    $type: 'blob'
-    ref: {
-      $link: string
-    }
-    mimeType: string
-    size: number
-  }
-  alt: string
-}
-
 export async function createPost(petDetails: PetDetails): Promise<boolean> {
   try {
-    const agent = new BskyAgent({ service: 'https://bsky.social' })
+    const agent = new AtpAgent({ service: 'https://bsky.social' })
     await agent.login({ identifier: BSKY_USERNAME!, password: BSKY_PASSWORD! })
 
     petDetails.name = decodeHtmlEntities(petDetails.name)
@@ -49,28 +37,26 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
       petDetails.description = decodeHtmlEntities(petDetails.description)
 
     const imageBuffers = await Promise.all(petDetails.photoUrls.slice(0, 4).map(url => getImageAsBuffer(url)))
-    const images: BskyImage[] = []
+    const imageBlobRefs: BlobRef[] = []
 
     for (const buffer of imageBuffers) {
       if (buffer) {
-        const upload = await agent.uploadBlob(buffer, { encoding: 'image/jpeg' })
-        images.push({
-          $type: 'app.bsky.embed.images#image',
-          image: {
-            $type: 'blob',
-            ref: {
-              $link: upload.data.blob.ref.$link,
-            },
-            mimeType: upload.data.blob.mimeType,
-            size: upload.data.blob.size,
-          },
-          alt: createAltText(petDetails),
-        })
+        const imageBlobResponse = await agent.api.com.atproto.repo.uploadBlob(buffer, { encoding: 'image/jpeg' })
+        const imageBlobRef: BlobRef = imageBlobResponse.data.blob
+        imageBlobRefs.push(imageBlobRef)
       }
       else {
         console.error('Failed to retrieve an image buffer.')
       }
     }
+
+    const imagesEmbed = imageBlobRefs.map((blobRef) => {
+      return {
+        $type: 'app.bsky.embed.images#image',
+        image: blobRef,
+        alt: createAltText(petDetails),
+      }
+    })
 
     const shortUrl = shortenUrl(petDetails.url, '?referrer_id=')
     const formattedName = petDetails.name.trim().replace(/\s+,/, ',')
@@ -86,7 +72,7 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
       facets: rt.facets,
       embed: {
         $type: 'app.bsky.embed.images',
-        images,
+        images: imagesEmbed,
       },
       createdAt: new Date().toISOString(),
     }
@@ -97,7 +83,16 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
       return false
     }
 
-    await agent.post(postRecord)
+    await agent.api.com.atproto.repo.createRecord({
+      repo:
+        agent.session?.did
+        ?? (() => {
+          throw new Error('Session DID is undefined')
+        })(),
+      collection: 'app.bsky.feed.post',
+      record: postRecord,
+    })
+
     // eslint-disable-next-line no-console
     console.log('Post created successfully:', postRecord)
     return true
