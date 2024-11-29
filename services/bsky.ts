@@ -1,4 +1,3 @@
-import type { BlobRef } from '@atproto/api'
 import { AppBskyFeedPost, AtpAgent, RichText } from '@atproto/api'
 import { BSKY_PASSWORD, BSKY_USERNAME } from '../config'
 import { decodeHtmlEntities } from '../utils/decodeHtmlEntities'
@@ -37,15 +36,19 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
       petDetails.description = decodeHtmlEntities(petDetails.description)
 
     const imageBuffers = await Promise.all(petDetails.photoUrls.slice(0, 4).map(url => getImageAsBuffer(url)))
-    const images: { $type: string, alt: string, image: BlobRef }[] = []
+    const images: Array<{ $type: string, alt: string, image: { $type: string, ref: string } }> = []
 
     for (const buffer of imageBuffers) {
       if (buffer) {
         const upload = await agent.api.com.atproto.repo.uploadBlob(buffer, { encoding: 'image/jpeg' })
+        const blobRef = {
+          $type: 'blob',
+          ref: upload.data.blob.ref,
+        }
         images.push({
           $type: 'app.bsky.embed.images#image',
           alt: createAltText(petDetails),
-          image: upload.data.blob,
+          image: blobRef,
         })
       }
       else {
