@@ -37,26 +37,21 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
       petDetails.description = decodeHtmlEntities(petDetails.description)
 
     const imageBuffers = await Promise.all(petDetails.photoUrls.slice(0, 4).map(url => getImageAsBuffer(url)))
-    const imageBlobRefs: BlobRef[] = []
+    const images: { $type: string, alt: string, image: BlobRef }[] = []
 
     for (const buffer of imageBuffers) {
       if (buffer) {
-        const imageBlobResponse = await agent.api.com.atproto.repo.uploadBlob(buffer, { encoding: 'image/jpeg' })
-        console.log('Blob response:', JSON.stringify(imageBlobResponse.data.blob, null, 2))
-        imageBlobRefs.push(imageBlobResponse.data.blob)
+        const upload = await agent.api.com.atproto.repo.uploadBlob(buffer, { encoding: 'image/jpeg' })
+        images.push({
+          $type: 'app.bsky.embed.images#image',
+          alt: createAltText(petDetails),
+          image: upload.data.blob,
+        })
       }
       else {
         console.error('Failed to retrieve an image buffer.')
       }
     }
-
-    const imagesEmbed = imageBlobRefs.map(blobRef => ({
-      $type: 'app.bsky.embed.images#image',
-      image: blobRef,
-      alt: createAltText(petDetails),
-    }))
-
-    console.log('Images embed:', JSON.stringify(imagesEmbed, null, 2))
 
     const shortUrl = shortenUrl(petDetails.url, '?referrer_id=')
     const formattedName = petDetails.name.trim().replace(/\s+,/, ',')
@@ -72,12 +67,10 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
       facets: rt.facets,
       embed: {
         $type: 'app.bsky.embed.images',
-        images: imagesEmbed,
+        images,
       },
       createdAt: new Date().toISOString(),
     }
-
-    console.log('Post record:', JSON.stringify(postRecord, null, 2))
 
     const validation = AppBskyFeedPost.validateRecord(postRecord)
     if (!validation.success) {
@@ -95,6 +88,7 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
       record: postRecord,
     })
 
+    // eslint-disable-next-line no-console
     console.log('Post created successfully:', postRecord)
     return true
   }
