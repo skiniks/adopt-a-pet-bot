@@ -1,4 +1,3 @@
-import type { BlobRef } from '@atproto/api'
 import { AppBskyFeedPost, BskyAgent, RichText } from '@atproto/api'
 import { BSKY_PASSWORD, BSKY_USERNAME } from '../config'
 import { decodeHtmlEntities } from '../utils/decodeHtmlEntities'
@@ -27,8 +26,16 @@ interface PetDetails {
   }
 }
 
-interface ImageEmbed {
-  image: BlobRef
+interface BskyImage {
+  $type: 'app.bsky.embed.images#image'
+  image: {
+    $type: 'blob'
+    ref: {
+      $link: string
+    }
+    mimeType: string
+    size: number
+  }
   alt: string
 }
 
@@ -42,13 +49,21 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
       petDetails.description = decodeHtmlEntities(petDetails.description)
 
     const imageBuffers = await Promise.all(petDetails.photoUrls.slice(0, 4).map(url => getImageAsBuffer(url)))
-    const images: ImageEmbed[] = []
+    const images: BskyImage[] = []
 
     for (const buffer of imageBuffers) {
       if (buffer) {
         const upload = await agent.uploadBlob(buffer, { encoding: 'image/jpeg' })
         images.push({
-          image: upload.data.blob,
+          $type: 'app.bsky.embed.images#image',
+          image: {
+            $type: 'blob',
+            ref: {
+              $link: upload.data.blob.ref.$link,
+            },
+            mimeType: upload.data.blob.mimeType,
+            size: upload.data.blob.size,
+          },
           alt: createAltText(petDetails),
         })
       }
