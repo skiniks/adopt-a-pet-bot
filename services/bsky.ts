@@ -42,6 +42,7 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
     for (const buffer of imageBuffers) {
       if (buffer) {
         const imageBlobResponse = await agent.api.com.atproto.repo.uploadBlob(buffer, { encoding: 'image/jpeg' })
+        console.log('Blob response:', JSON.stringify(imageBlobResponse.data.blob, null, 2))
         imageBlobRefs.push(imageBlobResponse.data.blob)
       }
       else {
@@ -49,12 +50,13 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
       }
     }
 
-    const imagesEmbed = imageBlobRefs.map((blobRef) => {
-      return {
-        alt: createAltText(petDetails),
-        image: blobRef,
-      }
-    })
+    const imagesEmbed = imageBlobRefs.map(blobRef => ({
+      $type: 'app.bsky.embed.images#image',
+      image: blobRef,
+      alt: createAltText(petDetails),
+    }))
+
+    console.log('Images embed:', JSON.stringify(imagesEmbed, null, 2))
 
     const shortUrl = shortenUrl(petDetails.url, '?referrer_id=')
     const formattedName = petDetails.name.trim().replace(/\s+,/, ',')
@@ -75,6 +77,8 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
       createdAt: new Date().toISOString(),
     }
 
+    console.log('Post record:', JSON.stringify(postRecord, null, 2))
+
     const validation = AppBskyFeedPost.validateRecord(postRecord)
     if (!validation.success) {
       console.error('Invalid Post Record:', validation.error)
@@ -91,7 +95,6 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
       record: postRecord,
     })
 
-    // eslint-disable-next-line no-console
     console.log('Post created successfully:', postRecord)
     return true
   }
