@@ -27,6 +27,11 @@ interface PetDetails {
   }
 }
 
+interface ImageEmbed {
+  image: BlobRef
+  alt: string
+}
+
 export async function createPost(petDetails: PetDetails): Promise<boolean> {
   try {
     const agent = new BskyAgent({ service: 'https://bsky.social' })
@@ -37,44 +42,20 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
       petDetails.description = decodeHtmlEntities(petDetails.description)
 
     const imageBuffers = await Promise.all(petDetails.photoUrls.slice(0, 4).map(url => getImageAsBuffer(url)))
-    const imageBlobRefs: BlobRef[] = []
+    const images: ImageEmbed[] = []
 
     for (const buffer of imageBuffers) {
       if (buffer) {
-        const imageBlobResponse = await agent.uploadBlob(buffer, { encoding: 'image/jpeg' })
-        const imageBlobRef: BlobRef = imageBlobResponse.data.blob
-        imageBlobRefs.push(imageBlobRef)
+        const upload = await agent.uploadBlob(buffer, { encoding: 'image/jpeg' })
+        images.push({
+          image: upload.data.blob,
+          alt: createAltText(petDetails),
+        })
       }
       else {
         console.error('Failed to retrieve an image buffer.')
       }
     }
-
-    const createAltText = (details: PetDetails) => {
-      let breedStr = details.breeds.primary || 'unknown breed'
-      if (details.breeds.secondary)
-        breedStr += ` and ${details.breeds.secondary}`
-      else if (details.breeds.mixed && !breedStr.toLowerCase().includes('mix'))
-        breedStr += ' mix'
-
-      let species = details.species.toLowerCase()
-      if (breedStr.toLowerCase().includes(species))
-        species = ''
-      else species = `${species}, `
-
-      const location = `${details.contact.address.city}, ${details.contact.address.state}`
-      return `${details.name} is a ${breedStr} ${species}available for adoption in ${location}.`
-    }
-
-    const imagesEmbed = imageBlobRefs.map((blobRef) => {
-      const altText = createAltText(petDetails)
-
-      return {
-        $type: 'app.bsky.embed.image',
-        image: blobRef,
-        alt: altText,
-      }
-    })
 
     const shortUrl = shortenUrl(petDetails.url, '?referrer_id=')
     const formattedName = petDetails.name.trim().replace(/\s+,/, ',')
@@ -90,28 +71,40 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
       facets: rt.facets,
       embed: {
         $type: 'app.bsky.embed.images',
-        images: imagesEmbed,
+        images,
       },
       createdAt: new Date().toISOString(),
     }
 
-    if (AppBskyFeedPost.isRecord(postRecord)) {
-      const res = AppBskyFeedPost.validateRecord(postRecord)
-      if (res.success) {
-        await agent.post(postRecord)
-        // eslint-disable-next-line no-console
-        console.log('Post created successfully:', postRecord)
-        return true
-      }
-      else {
-        console.error('Invalid Post Record:', res.error)
-        return false
-      }
+    const validation = AppBskyFeedPost.validateRecord(postRecord)
+    if (!validation.success) {
+      console.error('Invalid Post Record:', validation.error)
+      return false
     }
+
+    await agent.post(postRecord)
+    // eslint-disable-next-line no-console
+    console.log('Post created successfully:', postRecord)
+    return true
   }
   catch (err) {
     console.error('Error creating post:', err)
     return false
   }
-  return false
+}
+
+function createAltText(details: PetDetails): string {
+  let breedStr = details.breeds.primary || 'unknown breed'
+  if (details.breeds.secondary)
+    breedStr += ` and ${details.breeds.secondary}`
+  else if (details.breeds.mixed && !breedStr.toLowerCase().includes('mix'))
+    breedStr += ' mix'
+
+  let species = details.species.toLowerCase()
+  if (breedStr.toLowerCase().includes(species))
+    species = ''
+  else species = `${species}, `
+
+  const location = `${details.contact.address.city}, ${details.contact.address.state}`
+  return `${details.name} is a ${breedStr} ${species}available for adoption in ${location}.`
 }
