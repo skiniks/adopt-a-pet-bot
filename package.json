@@ -6,7 +6,7 @@
     "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.16.0",
+    "@antfu/eslint-config": "^4.1.1",
     "@atproto/api": "^0.13.33",
     "@types/node": "^22.13.1",
     "@vercel/node": "^5.1.1",
