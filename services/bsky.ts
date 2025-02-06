@@ -1,8 +1,8 @@
 import { AtpAgent, RichText } from '@atproto/api'
 import { BSKY_PASSWORD, BSKY_USERNAME } from '../config'
 import { getImageAsBuffer } from '../utils/getImageAsBuffer'
-import { shortenUrl } from '../utils/shortenUrl'
 import { getRandomIntro } from '../utils/getRandomIntro'
+import { shortenUrl } from '../utils/shortenUrl'
 
 interface PetDetails {
   name: string

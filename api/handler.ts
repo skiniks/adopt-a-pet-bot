@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { fetchPetfinderToken, getToken } from '../utils/fetchPetfinderToken'
 import { getRandomPet } from '../services/getRandomPet'
+import { fetchPetfinderToken, getToken } from '../utils/fetchPetfinderToken'
 
 export default async function handler(_req: VercelRequest, res: VercelResponse): Promise<void> {
   try {
