@@ -1,3 +1,4 @@
+import type { Buffer } from 'node:buffer'
 import { CredentialManager, XRPC } from '@atcute/client'
 import { BSKY_PASSWORD, BSKY_USERNAME, SERVICE } from '../config/index.js'
 import { getImageAsBuffer } from '../utils/getImageAsBuffer.js'
@@ -52,6 +53,13 @@ function createAltText(details: PetDetails): string {
   return `${details.name} is a ${breedStr} ${species}available for adoption in ${location}.`
 }
 
+async function uploadBlob(rpc: XRPC, buffer: Buffer) {
+  const { data } = await rpc.call('com.atproto.repo.uploadBlob', {
+    data: buffer,
+  })
+  return data.blob
+}
+
 export async function createPost(petDetails: PetDetails): Promise<boolean> {
   try {
     const manager = new CredentialManager({
@@ -73,17 +81,14 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
 
     for (const buffer of imageBuffers) {
       if (buffer) {
-        const upload = await rpc.call('com.atproto.repo.uploadBlob', {
-          data: buffer,
-        })
-
+        const uploadedBlob = await uploadBlob(rpc, buffer)
         images.push({
           alt: createAltText(petDetails),
           image: {
             $type: 'blob',
-            ref: upload.data.blob.ref,
-            mimeType: upload.data.blob.mimeType,
-            size: upload.data.blob.size,
+            ref: uploadedBlob.ref,
+            mimeType: uploadedBlob.mimeType,
+            size: uploadedBlob.size,
           },
         })
       }
@@ -97,20 +102,21 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
     const introSentence = getRandomIntro(petDetails.name, petDetails.species)
     const postText = `${introSentence} ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${shortUrl}`
 
-    const postRecord = {
+    const record = {
+      $type: 'app.bsky.feed.post',
       text: postText,
+      createdAt: new Date().toISOString(),
       embed: {
         $type: 'app.bsky.embed.images',
         images,
       },
-      createdAt: new Date().toISOString(),
     }
 
     await rpc.call('com.atproto.repo.createRecord', {
       data: {
         repo: manager.session.did,
         collection: 'app.bsky.feed.post',
-        record: postRecord,
+        record,
       },
     })
 
