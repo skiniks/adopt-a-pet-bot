@@ -1,5 +1,6 @@
 import type { At } from '@atcute/client/lexicons'
 import type { Buffer } from 'node:buffer'
+import RichtextBuilder from '@atcute/bluesky-richtext-builder'
 import { CredentialManager, XRPC } from '@atcute/client'
 import { BSKY_PASSWORD, BSKY_USERNAME, SERVICE } from '../config/index.js'
 import { getImageAsBuffer } from '../utils/getImageAsBuffer.js'
@@ -102,11 +103,16 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
     const shortUrl = shortenUrl(petDetails.url, '?referrer_id=')
     const formattedName = petDetails.name.trim().replace(/\s+,/, ',')
     const introSentence = getRandomIntro(petDetails.name, petDetails.species)
-    const postText = `${introSentence} ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${shortUrl}`
+
+    const { text, facets } = new RichtextBuilder()
+      .addText(`${introSentence} ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: `)
+      .addLink(shortUrl, shortUrl)
+      .build()
 
     const record = {
       $type: 'app.bsky.feed.post',
-      text: postText,
+      text,
+      facets,
       createdAt: new Date().toISOString(),
       embed: {
         $type: 'app.bsky.embed.images',

@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@atcute/bluesky-richtext-builder':
+        specifier: ^1.0.2
+        version: 1.0.2(@atcute/bluesky@1.0.12(@atcute/client@2.0.7))(@atcute/client@2.0.7)
       '@atcute/client':
         specifier: ^2.0.7
         version: 2.0.7
@@ -84,6 +87,17 @@ packages:
 
   '@antfu/install-pkg@1.0.0':
     resolution: {integrity: sha512-xvX6P/lo1B3ej0OsaErAjqgFYzYVcJpamjLAFLYh9vRJngBrMoUG7aVnrGTeqM7yxbyTD5p3F2+0/QUEh8Vzhw==}
+
+  '@atcute/bluesky-richtext-builder@1.0.2':
+    resolution: {integrity: sha512-sa+9B5Ygb1GcWeMpav9RVBRdFLL5snZEoFFF2RkTaNr61m/cLd5lk97QJs+t9LXUEl5cfHS3jXujywFrGXZj9w==}
+    peerDependencies:
+      '@atcute/bluesky': ^1.0.0
+      '@atcute/client': ^1.0.0 || ^2.0.0
+
+  '@atcute/bluesky@1.0.12':
+    resolution: {integrity: sha512-oUM+MxD5asGYyQDOHBGay7f9ryhsBpQ8LTUmsEZvp4t/WG0ZV2AcFRWsG0DxB+CsmSTbP2DHLMZCatE3usmt+g==}
+    peerDependencies:
+      '@atcute/client': ^1.0.0 || ^2.0.0
 
   '@atcute/client@2.0.7':
     resolution: {integrity: sha512-bvNahrCGvhZw/EIx0HU/GOoKZEnUaAppbuZh7cu+VsOFA2tdFLnZJed9Hagh5Yz/eUX7QUh5NB4dRTRUdggSLQ==}
@@ -2115,6 +2129,15 @@ snapshots:
     dependencies:
       package-manager-detector: 0.2.9
       tinyexec: 0.3.2
+
+  '@atcute/bluesky-richtext-builder@1.0.2(@atcute/bluesky@1.0.12(@atcute/client@2.0.7))(@atcute/client@2.0.7)':
+    dependencies:
+      '@atcute/bluesky': 1.0.12(@atcute/client@2.0.7)
+      '@atcute/client': 2.0.7
+
+  '@atcute/bluesky@1.0.12(@atcute/client@2.0.7)':
+    dependencies:
+      '@atcute/client': 2.0.7
 
   '@atcute/client@2.0.7': {}
 
