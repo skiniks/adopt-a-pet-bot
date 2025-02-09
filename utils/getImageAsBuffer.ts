@@ -1,7 +1,7 @@
 import { Buffer } from 'node:buffer'
 import sharp from 'sharp'
 
-const MAX_IMAGE_SIZE = 1000000 // 1MB limit for Bluesky
+const MAX_IMAGE_SIZE = 976562 // 1MB limit for Bluesky
 const MIN_QUALITY = 70 // Don't go below this quality to maintain acceptable images
 const INITIAL_QUALITY = 90 // Start with high quality
 const QUALITY_DECREMENT = 10 // How much to reduce quality in each iteration

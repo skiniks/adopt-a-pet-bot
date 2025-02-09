@@ -1,3 +1,4 @@
+import type { At } from '@atcute/client/lexicons'
 import type { Buffer } from 'node:buffer'
 import { CredentialManager, XRPC } from '@atcute/client'
 import { BSKY_PASSWORD, BSKY_USERNAME, SERVICE } from '../config/index.js'
@@ -53,9 +54,10 @@ function createAltText(details: PetDetails): string {
   return `${details.name} is a ${breedStr} ${species}available for adoption in ${location}.`
 }
 
-async function uploadBlob(rpc: XRPC, buffer: Buffer) {
+async function uploadBlob(rpc: XRPC, buffer: Buffer): Promise<At.Blob> {
+  const blob = new Blob([buffer], { type: 'image/jpeg' })
   const { data } = await rpc.call('com.atproto.repo.uploadBlob', {
-    data: buffer,
+    data: blob,
   })
   return data.blob
 }
