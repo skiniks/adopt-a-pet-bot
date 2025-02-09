@@ -1,8 +1,8 @@
-import { AtpAgent, RichText } from '@atproto/api'
-import { BSKY_PASSWORD, BSKY_USERNAME } from '../config'
-import { getImageAsBuffer } from '../utils/getImageAsBuffer'
-import { getRandomIntro } from '../utils/getRandomIntro'
-import { shortenUrl } from '../utils/shortenUrl'
+import { CredentialManager, XRPC } from '@atcute/client'
+import { BSKY_PASSWORD, BSKY_USERNAME, SERVICE } from '../config/index.js'
+import { getImageAsBuffer } from '../utils/getImageAsBuffer.js'
+import { getRandomIntro } from '../utils/getRandomIntro.js'
+import { shortenUrl } from '../utils/shortenUrl.js'
 
 interface PetDetails {
   name: string
@@ -45,7 +45,8 @@ function createAltText(details: PetDetails): string {
   let species = details.species.toLowerCase()
   if (breedStr.toLowerCase().includes(species))
     species = ''
-  else species = `${species}, `
+  else
+    species = `${species}, `
 
   const location = `${details.contact.address.city}, ${details.contact.address.state}`
   return `${details.name} is a ${breedStr} ${species}available for adoption in ${location}.`
@@ -53,15 +54,29 @@ function createAltText(details: PetDetails): string {
 
 export async function createPost(petDetails: PetDetails): Promise<boolean> {
   try {
-    const agent = new AtpAgent({ service: 'https://bsky.social' })
-    await agent.login({ identifier: BSKY_USERNAME!, password: BSKY_PASSWORD! })
+    const manager = new CredentialManager({
+      service: SERVICE!,
+    })
+    const rpc = new XRPC({ handler: manager })
+
+    await manager.login({
+      identifier: BSKY_USERNAME!,
+      password: BSKY_PASSWORD!,
+    })
+
+    if (!manager.session?.did) {
+      throw new Error('Not logged in - no session DID available')
+    }
 
     const imageBuffers = await Promise.all(petDetails.photoUrls.slice(0, 4).map(url => getImageAsBuffer(url)))
     const images: BskyImage[] = []
 
     for (const buffer of imageBuffers) {
       if (buffer) {
-        const upload = await agent.api.com.atproto.repo.uploadBlob(buffer, { encoding: 'image/jpeg' })
+        const upload = await rpc.call('com.atproto.repo.uploadBlob', {
+          data: buffer,
+        })
+
         images.push({
           alt: createAltText(petDetails),
           image: {
@@ -82,13 +97,8 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
     const introSentence = getRandomIntro(petDetails.name, petDetails.species)
     const postText = `${introSentence} ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: ${shortUrl}`
 
-    const rt = new RichText({ text: postText })
-    await rt.detectFacets(agent)
-
     const postRecord = {
-      $type: 'app.bsky.feed.post',
-      text: rt.text,
-      facets: rt.facets,
+      text: postText,
       embed: {
         $type: 'app.bsky.embed.images',
         images,
@@ -96,14 +106,12 @@ export async function createPost(petDetails: PetDetails): Promise<boolean> {
       createdAt: new Date().toISOString(),
     }
 
-    await agent.api.com.atproto.repo.createRecord({
-      repo:
-        agent.session?.did
-        ?? (() => {
-          throw new Error('Session DID is undefined')
-        })(),
-      collection: 'app.bsky.feed.post',
-      record: postRecord,
+    await rpc.call('com.atproto.repo.createRecord', {
+      data: {
+        repo: manager.session.did,
+        collection: 'app.bsky.feed.post',
+        record: postRecord,
+      },
     })
 
     return true

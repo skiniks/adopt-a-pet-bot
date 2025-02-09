@@ -1,16 +1,23 @@
 {
   "name": "adopt-a-pet-bot",
+  "type": "module",
+  "version": "1.0.0",
   "private": true,
+  "author": "Ryan Skinner",
+  "license": "MIT",
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
+  "dependencies": {
+    "@atcute/client": "^2.0.7",
+    "@vercel/node": "^5.1.2"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^4.1.1",
-    "@atproto/api": "^0.13.33",
     "@types/node": "^22.13.1",
-    "@vercel/node": "^5.1.1",
-    "eslint": "^9.19.0",
+    "eslint": "^9.20.0",
+    "jiti": "^2.4.2",
     "typescript": "^5.7.3"
   }
 }

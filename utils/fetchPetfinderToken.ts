@@ -1,4 +1,4 @@
-import { PETFINDER_API_KEY, PETFINDER_SECRET, TOKEN_URL } from '../config'
+import { PETFINDER_API_KEY, PETFINDER_SECRET, TOKEN_URL } from '../config/index.js'
 
 interface PetFinderTokenResponse {
   access_token: string
