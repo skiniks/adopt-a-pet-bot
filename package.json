@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "@atcute/client": "^2.0.7",
-    "@vercel/node": "^5.1.2"
+    "@vercel/node": "^5.1.2",
+    "sharp": "^0.33.5"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^4.1.1",
