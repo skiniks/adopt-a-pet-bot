@@ -28,6 +28,7 @@ export async function getImageAsBuffer(imageUrl: string): Promise<Buffer | null>
             fit: 'inside',
             withoutEnlargement: true,
           })
+          .withMetadata() // Preserve EXIF data including orientation
           .toBuffer()
       }
 
@@ -36,6 +37,7 @@ export async function getImageAsBuffer(imageUrl: string): Promise<Buffer | null>
       while (buffer.length > MAX_IMAGE_SIZE && quality >= MIN_QUALITY) {
         buffer = await sharp(buffer)
           .jpeg({ quality })
+          .withMetadata()
           .toBuffer()
 
         quality -= QUALITY_DECREMENT
