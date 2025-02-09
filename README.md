@@ -1,6 +1,6 @@
 # Adopt a Pet Bluesky Bot
 
-A serverless bot that shares adoptable pets from Petfinder to [@adoptapet.bsky.social](https://bsky.app/profile/adoptapet.bsky.social) on Bluesky. The bot fetches random pets from the Petfinder API every 30 minutes on Bluesky, helping to increase visibility for pets in need of homes.
+A serverless bot that shares adoptable pets from Petfinder to [@adoptapet.bsky.social](https://adoptapet.bsky.social) on Bluesky. The bot fetches random pets from the Petfinder API every 30 minutes, helping to increase visibility for pets in need of homes.
 
 ## Configuration
 
