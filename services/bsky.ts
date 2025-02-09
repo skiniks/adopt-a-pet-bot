@@ -1,5 +1,6 @@
-import type { At } from '@atcute/client/lexicons'
 import type { Buffer } from 'node:buffer'
+import type { BskyBlob, BskyImage } from '../types/bsky.js'
+import type { TransformedPet } from '../types/petfinder.js'
 import RichtextBuilder from '@atcute/bluesky-richtext-builder'
 import { CredentialManager, XRPC } from '@atcute/client'
 import { BSKY_PASSWORD, BSKY_USERNAME, SERVICE } from '../config/index.js'
@@ -7,38 +8,7 @@ import { getImageAsBuffer } from '../utils/getImageAsBuffer.js'
 import { getRandomIntro } from '../utils/getRandomIntro.js'
 import { shortenUrl } from '../utils/shortenUrl.js'
 
-interface PetDetails {
-  name: string
-  description: string
-  contact: {
-    address: {
-      city: string
-      state: string
-    }
-  }
-  species: string
-  age: string
-  url: string
-  photoUrls: string[]
-  breeds: {
-    primary?: string
-    secondary?: string
-    mixed?: boolean
-    unknown?: boolean
-  }
-}
-
-interface BskyImage {
-  alt: string
-  image: {
-    $type: 'blob'
-    ref: { $link: string }
-    mimeType: string
-    size: number
-  }
-}
-
-function createAltText(details: PetDetails): string {
+function createAltText(details: TransformedPet): string {
   let breedStr = details.breeds.primary || 'unknown breed'
   if (details.breeds.secondary)
     breedStr += ` and ${details.breeds.secondary}`
@@ -55,7 +25,7 @@ function createAltText(details: PetDetails): string {
   return `${details.name} is a ${breedStr} ${species}available for adoption in ${location}.`
 }
 
-async function uploadBlob(rpc: XRPC, buffer: Buffer): Promise<At.Blob> {
+async function uploadBlob(rpc: XRPC, buffer: Buffer): Promise<BskyBlob> {
   const blob = new Blob([buffer], { type: 'image/jpeg' })
   const { data } = await rpc.call('com.atproto.repo.uploadBlob', {
     data: blob,
@@ -63,7 +33,7 @@ async function uploadBlob(rpc: XRPC, buffer: Buffer): Promise<At.Blob> {
   return data.blob
 }
 
-export async function createPost(petDetails: PetDetails): Promise<boolean> {
+export async function createPost(petDetails: TransformedPet): Promise<boolean> {
   try {
     const manager = new CredentialManager({
       service: SERVICE!,

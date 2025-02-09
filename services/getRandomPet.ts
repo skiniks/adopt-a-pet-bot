@@ -1,26 +1,6 @@
+import type { PetfinderPet } from '../types/petfinder.js'
 import { ANIMALS_URL } from '../config/index.js'
 import { createPost } from './bsky.js'
-
-interface Pet {
-  name: string
-  description: string
-  contact: {
-    address: {
-      city: string
-      state: string
-    }
-  }
-  species: string
-  age: string
-  url: string
-  photos: { large: string }[]
-  breeds: {
-    primary?: string
-    secondary?: string
-    mixed?: boolean
-    unknown?: boolean
-  }
-}
 
 export async function getRandomPet(token: string, retryCount = 0): Promise<void> {
   const MAX_RETRIES = 3
@@ -43,7 +23,7 @@ export async function getRandomPet(token: string, retryCount = 0): Promise<void>
       return
     }
 
-    const pet: Pet = data.animals[0]
+    const pet: PetfinderPet = data.animals[0]
 
     if (!pet.photos?.length || !pet.contact.address.city || !pet.contact.address.state) {
       console.warn('Pet missing required data, trying another one...')
