@@ -33,6 +33,37 @@ export async function getRandomPet(token: string, retryCount = 0): Promise<void>
 
     const photoUrls: string[] = pet.photos.map(photo => photo.large)
 
+    // Extract and validate video URL if available
+    let videoUrl: string | undefined
+    if (pet.videos?.[0]?.embed) {
+      // Try direct URL first
+      videoUrl = pet.videos[0].embed
+      // Fallback to embedded source if it's an HTML tag
+      if (videoUrl.includes('<')) {
+        const match = pet.videos[0].embed.match(/source src="([^"]+)"/)
+        if (match?.[1]) {
+          videoUrl = match[1]
+        }
+      }
+
+      // Validate that the URL points to a video file
+      if (videoUrl) {
+        try {
+          const response = await fetch(videoUrl, { method: 'HEAD' })
+          const contentType = response.headers.get('content-type')
+
+          if (!contentType?.startsWith('video/')) {
+            console.warn('URL does not point to a video file:', contentType)
+            videoUrl = undefined
+          }
+        }
+        catch (error) {
+          console.error('Error validating video URL:', error)
+          videoUrl = undefined
+        }
+      }
+    }
+
     const postSuccess = await createPost({
       name: pet.name,
       description: pet.description,
@@ -41,6 +72,7 @@ export async function getRandomPet(token: string, retryCount = 0): Promise<void>
       age: pet.age,
       url: pet.url,
       photoUrls,
+      videoUrl,
       breeds: pet.breeds,
     })
 

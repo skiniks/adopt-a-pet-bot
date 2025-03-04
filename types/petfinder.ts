@@ -11,6 +11,7 @@ export interface PetfinderPet {
   age: string
   url: string
   photos: { large: string }[]
+  videos?: { embed: string }[]
   breeds: {
     primary?: string
     secondary?: string
@@ -19,6 +20,7 @@ export interface PetfinderPet {
   }
 }
 
-export type TransformedPet = Omit<PetfinderPet, 'photos'> & {
+export type TransformedPet = Omit<PetfinderPet, 'photos' | 'videos'> & {
   photoUrls: string[]
+  videoUrl?: string
 }
