@@ -1,4 +1,4 @@
-import type { PetfinderPet } from '../types/petfinder.js'
+import type { PetfinderPet } from '../types/index.js'
 import { ANIMALS_URL } from '../config/index.js'
 import { createPost } from './bsky.js'
 

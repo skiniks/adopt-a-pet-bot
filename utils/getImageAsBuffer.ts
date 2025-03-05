@@ -23,22 +23,24 @@ export async function getImageAsBuffer(imageUrl: string): Promise<Buffer | null>
       // If image is exceptionally large, do an initial resize
       const maxDimension = Math.max(metadata.width || 0, metadata.height || 0)
       if (maxDimension > 2000) {
-        buffer = await image
+        const resizedBuffer = await image
           .resize(2000, 2000, {
             fit: 'inside',
             withoutEnlargement: true,
           })
           .withMetadata() // Preserve EXIF data including orientation
           .toBuffer()
+        buffer = Buffer.from(resizedBuffer)
       }
 
       // Try progressively lower qualities until we get under the size limit
       let quality = INITIAL_QUALITY
       while (buffer.length > MAX_IMAGE_SIZE && quality >= MIN_QUALITY) {
-        buffer = await sharp(buffer)
+        const compressedBuffer = await sharp(buffer)
           .jpeg({ quality })
           .withMetadata()
           .toBuffer()
+        buffer = Buffer.from(compressedBuffer)
 
         quality -= QUALITY_DECREMENT
       }

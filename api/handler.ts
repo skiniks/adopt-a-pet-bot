@@ -1,8 +1,8 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node'
+import type { ApiRequest, ApiResponse } from '../types/index.js'
 import { getRandomPet } from '../services/getRandomPet.js'
 import { fetchPetfinderToken, getToken } from '../utils/fetchPetfinderToken.js'
 
-export default async function handler(_req: VercelRequest, res: VercelResponse): Promise<void> {
+export default async function handler(_req: ApiRequest, res: ApiResponse): Promise<void> {
   try {
     await fetchPetfinderToken()
     const token = getToken()

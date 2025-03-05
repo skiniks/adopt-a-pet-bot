@@ -1,6 +1,5 @@
 import type { Buffer } from 'node:buffer'
-import type { BskyBlob, BskyImage } from '../types/bsky.js'
-import type { TransformedPet } from '../types/petfinder.js'
+import type { BskyBlob, BskyImage, TransformedPet } from '../types/index.js'
 import RichtextBuilder from '@atcute/bluesky-richtext-builder'
 import { CredentialManager, XRPC } from '@atcute/client'
 import { BSKY_PASSWORD, BSKY_USERNAME, SERVICE } from '../config/index.js'
