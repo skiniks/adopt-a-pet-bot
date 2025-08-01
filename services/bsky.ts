@@ -1,7 +1,9 @@
+import type { } from '@atcute/atproto'
+import type { } from '@atcute/bluesky'
 import type { Buffer } from 'node:buffer'
 import type { BskyBlob, BskyImage, TransformedPet } from '../types/index.js'
 import RichtextBuilder from '@atcute/bluesky-richtext-builder'
-import { CredentialManager, XRPC } from '@atcute/client'
+import { Client, CredentialManager, ok } from '@atcute/client'
 import { BSKY_PASSWORD, BSKY_USERNAME, SERVICE } from '../config/index.js'
 import { getImageAsBuffer } from '../utils/getImageAsBuffer.js'
 import { getRandomIntro } from '../utils/getRandomIntro.js'
@@ -24,11 +26,12 @@ function createAltText(details: TransformedPet): string {
   return `${details.name} is a ${breedStr} ${species}available for adoption in ${location}.`
 }
 
-async function uploadBlob(rpc: XRPC, buffer: Buffer): Promise<BskyBlob> {
+async function uploadBlob(rpc: Client, buffer: Buffer): Promise<BskyBlob> {
   const blob = new Blob([buffer], { type: 'image/jpeg' })
-  const { data } = await rpc.call('com.atproto.repo.uploadBlob', {
-    data: blob,
+  const response = await rpc.post('com.atproto.repo.uploadBlob', {
+    input: blob,
   })
+  const data = ok(response)
   return data.blob
 }
 
@@ -37,7 +40,7 @@ export async function createPost(petDetails: TransformedPet): Promise<boolean> {
     const manager = new CredentialManager({
       service: SERVICE!,
     })
-    const rpc = new XRPC({ handler: manager })
+    const rpc = new Client({ handler: manager })
 
     await manager.login({
       identifier: BSKY_USERNAME!,
@@ -75,7 +78,7 @@ export async function createPost(petDetails: TransformedPet): Promise<boolean> {
 
     const { text, facets } = new RichtextBuilder()
       .addText(`${introSentence} ${formattedName}, located in ${petDetails.contact.address.city}, ${petDetails.contact.address.state}.\n\nLearn more: `)
-      .addLink(shortUrl, shortUrl)
+      .addLink(shortUrl, shortUrl as `${string}:${string}`)
       .build()
 
     const record = {
@@ -89,13 +92,14 @@ export async function createPost(petDetails: TransformedPet): Promise<boolean> {
       },
     }
 
-    await rpc.call('com.atproto.repo.createRecord', {
-      data: {
+    const response = await rpc.post('com.atproto.repo.createRecord', {
+      input: {
         repo: manager.session.did,
         collection: 'app.bsky.feed.post',
         record,
       },
     })
+    ok(response)
 
     return true
   }
