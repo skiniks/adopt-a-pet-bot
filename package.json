@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@atcute/atproto": "^3.1.1",
-    "@atcute/bluesky": "^3.2.0",
+    "@atcute/bluesky": "^3.2.1",
     "@atcute/bluesky-richtext-builder": "^2.0.3",
     "@atcute/client": "^4.0.3",
     "sharp": "^0.34.3"

@@ -12,8 +12,8 @@ importers:
         specifier: ^3.1.1
         version: 3.1.1
       '@atcute/bluesky':
-        specifier: ^3.2.0
-        version: 3.2.0
+        specifier: ^3.2.1
+        version: 3.2.1
       '@atcute/bluesky-richtext-builder':
         specifier: ^2.0.3
         version: 2.0.3
@@ -100,11 +100,14 @@ packages:
   '@atcute/atproto@3.1.1':
     resolution: {integrity: sha512-D+RLTIPF0xLu7BPZY8KSewAPemJFh+3n3zeQ3ROsLxbTtCHbrTDMAmAFexaVRAPGcPYrwXaBUlv7yZjScJolMg==}
 
+  '@atcute/atproto@3.1.2':
+    resolution: {integrity: sha512-m6OWoGTeL8Wlw7cm8Nrf+NU24rlx5A0DzxEQQPPu1wqYNHw6S33nOU90W+U09vVN0aZGZUrLFfWWhAaSWTp1ZQ==}
+
   '@atcute/bluesky-richtext-builder@2.0.3':
     resolution: {integrity: sha512-FOd4At9etRfkfpun3PFBU1TjRurWNjjwkZZ9UcURxdzOg8H6NBZXk4Djdz0Q8VpbcqUxjDOycGHTJClOA8+OEw==}
 
-  '@atcute/bluesky@3.2.0':
-    resolution: {integrity: sha512-OqPLqUNjXcgQ25MaPdU7H0QcWmZrx6QQk7d5B22A5U4xy+hZJ954kQ5mSAn24Bt0DEm4j/isq1WZovr3vaPTUA==}
+  '@atcute/bluesky@3.2.1':
+    resolution: {integrity: sha512-WehZuGNEC9NNB2y7Jg/i4ANzbMEQzs2EwrLYKWDuvJT3YnPHEol3vkc4DK47TODs3TiacQJp4MWhsQyfktsZ6g==}
 
   '@atcute/client@4.0.3':
     resolution: {integrity: sha512-RIOZWFVLca/HiPAAUDqQPOdOreCxTbL5cb+WUf5yqQOKIu5yEAP3eksinmlLmgIrlr5qVOE7brazUUzaskFCfw==}
@@ -115,6 +118,9 @@ packages:
   '@atcute/lexicons@1.1.0':
     resolution: {integrity: sha512-LFqwnria78xLYb62Ri/+WwQpUTgZp2DuyolNGIIOV1dpiKhFFFh//nscHMA6IExFLQRqWDs3tTjy7zv0h3sf1Q==}
 
+  '@atcute/lexicons@1.1.1':
+    resolution: {integrity: sha512-k6qy5p3j9fJJ6ekaMPfEfp3ni4TW/XNuH9ZmsuwC0fi0tOjp+Fa8ZQakHwnqOzFt/cVBfGcmYE/lKNAbeTjgUg==}
+
   '@babel/helper-string-parser@7.27.1':
     resolution: {integrity: sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA==}
     engines: {node: '>=6.9.0'}
@@ -123,8 +129,8 @@ packages:
     resolution: {integrity: sha512-D2hP9eA+Sqx1kBZgzxZh0y1trbuU+JoDkiEwqhQ36nodYqJwyEIhPSdMNd7lOm/4io72luTPWH20Yda0xOuUow==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/parser@7.28.0':
-    resolution: {integrity: sha512-jVZGvOxOuNSsuQuLRTh13nU0AogFlw32w/MT+LV6D3sP5WdbW61E77RnkbaO2dUvmPAYrBDJXGn5gGS6tH4j8g==}
+  '@babel/parser@7.28.3':
+    resolution: {integrity: sha512-7+Ey1mAgYqFAx2h0RuoxcQT5+MlG3GTV0TQrgr7/ZliKsm/MNDxVVutlWaziMq7wJNAz8MTqz55XLpWvva6StA==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -352,8 +358,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@jridgewell/sourcemap-codec@1.5.4':
-    resolution: {integrity: sha512-VT2+G1VQs/9oz078bLrYbecdZKs912zQlkelYpuf+SXF+QvZDYJlbx/LSx+meSAwdDFnF8FVXW92AVjjkVmgFw==}
+  '@jridgewell/sourcemap-codec@1.5.5':
+    resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -1055,8 +1061,8 @@ packages:
   longest-streak@3.1.0:
     resolution: {integrity: sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==}
 
-  magic-string@0.30.17:
-    resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
+  magic-string@0.30.18:
+    resolution: {integrity: sha512-yi8swmWbO17qHhwIBNeeZxTceJMeBvWJaId6dyvTSOwTipqeHhMhOrz6513r1sOKnpvQ7zkhlG8tPrpilwTxHQ==}
 
   markdown-table@3.0.4:
     resolution: {integrity: sha512-wiYz4+JrLyb/DqW2hkFJxP7Vd7JuTDm77fvbM8VfEQdmSMqcImWeeRbHwZjBjIFki/VaMK2BhFi7oUUZeM5bqw==}
@@ -1563,15 +1569,19 @@ snapshots:
     dependencies:
       '@atcute/lexicons': 1.1.0
 
+  '@atcute/atproto@3.1.2':
+    dependencies:
+      '@atcute/lexicons': 1.1.1
+
   '@atcute/bluesky-richtext-builder@2.0.3':
     dependencies:
-      '@atcute/bluesky': 3.2.0
+      '@atcute/bluesky': 3.2.1
       '@atcute/lexicons': 1.1.0
 
-  '@atcute/bluesky@3.2.0':
+  '@atcute/bluesky@3.2.1':
     dependencies:
-      '@atcute/atproto': 3.1.1
-      '@atcute/lexicons': 1.1.0
+      '@atcute/atproto': 3.1.2
+      '@atcute/lexicons': 1.1.1
 
   '@atcute/client@4.0.3':
     dependencies:
@@ -1580,10 +1590,14 @@ snapshots:
 
   '@atcute/identity@1.0.3':
     dependencies:
-      '@atcute/lexicons': 1.1.0
+      '@atcute/lexicons': 1.1.1
       '@badrap/valita': 0.4.6
 
   '@atcute/lexicons@1.1.0':
+    dependencies:
+      esm-env: 1.2.2
+
+  '@atcute/lexicons@1.1.1':
     dependencies:
       esm-env: 1.2.2
 
@@ -1591,7 +1605,7 @@ snapshots:
 
   '@babel/helper-validator-identifier@7.27.1': {}
 
-  '@babel/parser@7.28.0':
+  '@babel/parser@7.28.3':
     dependencies:
       '@babel/types': 7.28.2
 
@@ -1800,7 +1814,7 @@ snapshots:
   '@img/sharp-win32-x64@0.34.3':
     optional: true
 
-  '@jridgewell/sourcemap-codec@1.5.4': {}
+  '@jridgewell/sourcemap-codec@1.5.5': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -1950,7 +1964,7 @@ snapshots:
 
   '@vue/compiler-core@3.5.13':
     dependencies:
-      '@babel/parser': 7.28.0
+      '@babel/parser': 7.28.3
       '@vue/shared': 3.5.13
       entities: 4.5.0
       estree-walker: 2.0.2
@@ -1963,13 +1977,13 @@ snapshots:
 
   '@vue/compiler-sfc@3.5.13':
     dependencies:
-      '@babel/parser': 7.28.0
+      '@babel/parser': 7.28.3
       '@vue/compiler-core': 3.5.13
       '@vue/compiler-dom': 3.5.13
       '@vue/compiler-ssr': 3.5.13
       '@vue/shared': 3.5.13
       estree-walker: 2.0.2
-      magic-string: 0.30.17
+      magic-string: 0.30.18
       postcss: 8.5.6
       source-map-js: 1.2.1
 
@@ -2559,9 +2573,9 @@ snapshots:
 
   longest-streak@3.1.0: {}
 
-  magic-string@0.30.17:
+  magic-string@0.30.18:
     dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.4
+      '@jridgewell/sourcemap-codec': 1.5.5
 
   markdown-table@3.0.4: {}
 
