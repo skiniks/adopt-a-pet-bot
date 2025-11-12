@@ -9,6 +9,30 @@ import { getImageAsBuffer } from '../utils/getImageAsBuffer.js'
 import { getRandomIntro } from '../utils/getRandomIntro.js'
 import { shortenUrl } from '../utils/shortenUrl.js'
 
+let manager: CredentialManager | null = null
+let rpc: Client | null = null
+let isLoggedIn = false
+
+export async function loginToBsky(): Promise<void> {
+  if (isLoggedIn && manager?.session?.did) {
+    console.warn('Already logged in to Bluesky')
+    return
+  }
+
+  manager = new CredentialManager({
+    service: SERVICE!,
+  })
+  rpc = new Client({ handler: manager })
+
+  await manager.login({
+    identifier: BSKY_USERNAME!,
+    password: BSKY_PASSWORD!,
+  })
+
+  isLoggedIn = true
+  console.warn('Successfully logged in to Bluesky')
+}
+
 function createAltText(details: TransformedPet): string {
   let breedStr = details.breeds.primary || 'unknown breed'
   if (details.breeds.secondary)
@@ -26,9 +50,9 @@ function createAltText(details: TransformedPet): string {
   return `${details.name} is a ${breedStr} ${species}available for adoption in ${location}.`
 }
 
-async function uploadBlob(rpc: Client, buffer: Buffer): Promise<BskyBlob> {
-  const blob = new Blob([buffer], { type: 'image/jpeg' })
-  const response = await rpc.post('com.atproto.repo.uploadBlob', {
+async function uploadBlob(client: Client, buffer: Buffer): Promise<BskyBlob> {
+  const blob = new Blob([new Uint8Array(buffer)], { type: 'image/jpeg' })
+  const response = await client.post('com.atproto.repo.uploadBlob', {
     input: blob,
   })
   const data = ok(response)
@@ -37,18 +61,8 @@ async function uploadBlob(rpc: Client, buffer: Buffer): Promise<BskyBlob> {
 
 export async function createPost(petDetails: TransformedPet): Promise<boolean> {
   try {
-    const manager = new CredentialManager({
-      service: SERVICE!,
-    })
-    const rpc = new Client({ handler: manager })
-
-    await manager.login({
-      identifier: BSKY_USERNAME!,
-      password: BSKY_PASSWORD!,
-    })
-
-    if (!manager.session?.did) {
-      throw new Error('Not logged in - no session DID available')
+    if (!manager || !rpc || !manager.session?.did) {
+      throw new Error('Not logged in - please call loginToBsky() first')
     }
 
     const imageBuffers = await Promise.all(petDetails.photoUrls.slice(0, 4).map(url => getImageAsBuffer(url)))

@@ -2,6 +2,7 @@ import process from 'node:process'
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import cron from 'node-cron'
+import { loginToBsky } from './services/bsky.js'
 import { getRandomPet } from './services/getRandomPet.js'
 import { fetchPetfinderToken, getToken } from './utils/fetchPetfinderToken.js'
 
@@ -32,11 +33,19 @@ serve({
   console.warn(`Health check available at http://localhost:${info.port}/health`)
 })
 
-console.warn('Setting up cron job to run every 30 minutes...')
-cron.schedule('*/30 * * * *', async () => {
-  console.warn(`Running scheduled pet post at ${new Date().toISOString()}`)
-  await runPetPost()
-})
+loginToBsky()
+  .then(() => {
+    console.warn('Setting up cron job to run every 30 minutes...')
+    cron.schedule('*/30 * * * *', async () => {
+      console.warn(`Running scheduled pet post at ${new Date().toISOString()}`)
+      await runPetPost()
+    })
+    console.warn('Adopt-a-Pet Bot started successfully')
+  })
+  .catch((error) => {
+    console.error('Failed to login to Bluesky:', error)
+    process.exit(1)
+  })
 
 process.on('SIGTERM', () => {
   console.warn('SIGTERM received, shutting down gracefully...')
@@ -47,5 +56,3 @@ process.on('SIGINT', () => {
   console.warn('SIGINT received, shutting down gracefully...')
   process.exit(0)
 })
-
-console.warn('Adopt-a-Pet Bot started successfully')
