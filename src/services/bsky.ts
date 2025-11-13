@@ -50,13 +50,24 @@ function createAltText(details: TransformedPet): string {
   return `${details.name} is a ${breedStr} ${species}available for adoption in ${location}.`
 }
 
-async function uploadBlob(client: Client, buffer: Buffer): Promise<BskyBlob> {
-  const blob = new Blob([new Uint8Array(buffer)], { type: 'image/jpeg' })
-  const response = await client.post('com.atproto.repo.uploadBlob', {
-    input: blob,
-  })
-  const data = ok(response)
-  return data.blob
+async function uploadBlob(client: Client, buffer: Buffer): Promise<BskyBlob | null> {
+  try {
+    const blob = new Blob([new Uint8Array(buffer)], { type: 'image/jpeg' })
+    const response = await client.post('com.atproto.repo.uploadBlob', {
+      input: blob,
+    })
+    const data = ok(response)
+    return data.blob
+  }
+  catch (err: any) {
+    if (err.error === 'BlobTooLarge') {
+      console.error(`Image too large: ${err.description}`)
+    }
+    else {
+      console.error('Error uploading blob:', err)
+    }
+    return null
+  }
 }
 
 export async function createPost(petDetails: TransformedPet): Promise<boolean> {
@@ -68,23 +79,31 @@ export async function createPost(petDetails: TransformedPet): Promise<boolean> {
     const imageBuffers = await Promise.all(petDetails.photoUrls.slice(0, 4).map(url => getImageAsBuffer(url)))
     const images: BskyImage[] = []
 
+    console.warn(`Processing ${imageBuffers.length} images for ${petDetails.name}`)
+
     for (const buffer of imageBuffers) {
       if (buffer) {
         const uploadedBlob = await uploadBlob(rpc, buffer)
-        images.push({
-          alt: createAltText(petDetails),
-          image: {
-            $type: 'blob',
-            ref: uploadedBlob.ref,
-            mimeType: uploadedBlob.mimeType,
-            size: uploadedBlob.size,
-          },
-        })
-      }
-      else {
-        console.error('Failed to retrieve an image buffer.')
+        if (uploadedBlob) {
+          images.push({
+            alt: createAltText(petDetails),
+            image: {
+              $type: 'blob',
+              ref: uploadedBlob.ref,
+              mimeType: uploadedBlob.mimeType,
+              size: uploadedBlob.size,
+            },
+          })
+        }
       }
     }
+
+    if (images.length === 0) {
+      console.error(`No images could be uploaded for ${petDetails.name} - skipping this pet`)
+      return false
+    }
+
+    console.warn(`Successfully uploaded ${images.length} image(s) for ${petDetails.name}`)
 
     const shortUrl = shortenUrl(petDetails.url, '?referrer_id=')
     const formattedName = petDetails.name.trim().replace(/\s+,/, ',')

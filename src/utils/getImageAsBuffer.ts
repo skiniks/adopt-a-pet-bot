@@ -1,10 +1,10 @@
 import { Buffer } from 'node:buffer'
 import sharp from 'sharp'
 
-const MAX_IMAGE_SIZE = 976562 // 1MB limit for Bluesky
-const MIN_QUALITY = 70 // Don't go below this quality to maintain acceptable images
-const INITIAL_QUALITY = 90 // Start with high quality
-const QUALITY_DECREMENT = 10 // How much to reduce quality in each iteration
+const MAX_IMAGE_SIZE = 950000 // ~950KB - leave buffer below Bluesky's 976KB limit
+const MIN_QUALITY = 60 // Don't go below this quality to maintain acceptable images
+const INITIAL_QUALITY = 85 // Start with good quality
+const QUALITY_DECREMENT = 5 // How much to reduce quality in each iteration
 
 export async function getImageAsBuffer(imageUrl: string): Promise<Buffer | null> {
   try {
@@ -15,42 +15,48 @@ export async function getImageAsBuffer(imageUrl: string): Promise<Buffer | null>
     const arrayBuffer = await response.arrayBuffer()
     let buffer = Buffer.from(arrayBuffer)
 
-    // Only process if the image exceeds Bluesky's limit
-    if (buffer.length > MAX_IMAGE_SIZE) {
-      const image = sharp(buffer)
-      const metadata = await image.metadata()
+    const image = sharp(buffer)
 
-      // If image is exceptionally large, do an initial resize
-      const maxDimension = Math.max(metadata.width || 0, metadata.height || 0)
-      if (maxDimension > 2000) {
+    // If image is too large, progressively resize and compress
+    if (buffer.length > MAX_IMAGE_SIZE) {
+      // Try different resize dimensions if needed
+      const resizeSizes = [2000, 1600, 1400, 1200]
+
+      for (const size of resizeSizes) {
         const resizedBuffer = await image
-          .resize(2000, 2000, {
+          .resize(size, size, {
             fit: 'inside',
             withoutEnlargement: true,
           })
-          .withMetadata() // Preserve EXIF data including orientation
-          .toBuffer()
-        buffer = Buffer.from(resizedBuffer)
-      }
-
-      // Try progressively lower qualities until we get under the size limit
-      let quality = INITIAL_QUALITY
-      while (buffer.length > MAX_IMAGE_SIZE && quality >= MIN_QUALITY) {
-        const compressedBuffer = await sharp(buffer)
-          .jpeg({ quality })
           .withMetadata()
           .toBuffer()
-        buffer = Buffer.from(compressedBuffer)
 
-        quality -= QUALITY_DECREMENT
+        buffer = Buffer.from(resizedBuffer)
+
+        // Try progressively lower qualities
+        let quality = INITIAL_QUALITY
+        while (buffer.length > MAX_IMAGE_SIZE && quality >= MIN_QUALITY) {
+          const compressedBuffer = await sharp(buffer)
+            .jpeg({ quality, mozjpeg: true })
+            .withMetadata()
+            .toBuffer()
+          buffer = Buffer.from(compressedBuffer)
+          quality -= QUALITY_DECREMENT
+        }
+
+        // If we got under the limit, we're done
+        if (buffer.length <= MAX_IMAGE_SIZE) {
+          break
+        }
       }
 
-      // If we still can't get under the limit, log a warning but return the best we could do
+      // If still too large, reject it
       if (buffer.length > MAX_IMAGE_SIZE) {
-        console.warn(
-          `Warning: Image from ${imageUrl} could not be reduced below ${buffer.length} bytes. `
-          + 'It may fail to upload to Bluesky.',
+        console.error(
+          `Image from ${imageUrl} is ${buffer.length} bytes after compression. `
+          + `Maximum is ${MAX_IMAGE_SIZE} bytes. Skipping this image.`,
         )
+        return null
       }
     }
 
