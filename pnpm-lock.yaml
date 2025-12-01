@@ -12,8 +12,8 @@ importers:
         specifier: ^3.1.9
         version: 3.1.9
       '@atcute/bluesky':
-        specifier: ^3.2.10
-        version: 3.2.10
+        specifier: ^3.2.11
+        version: 3.2.11
       '@atcute/bluesky-richtext-builder':
         specifier: ^2.0.4
         version: 2.0.4
@@ -118,8 +118,8 @@ packages:
   '@atcute/bluesky-richtext-builder@2.0.4':
     resolution: {integrity: sha512-ydA9VWBPsBE/gbu1vYbmh7AZ8FLfxp+LE4eH5GgOTCOxwhs7Mgy1oHrHY+Er6gu6PfdoUoGso0uI3Wl3ZF/Mxg==}
 
-  '@atcute/bluesky@3.2.10':
-    resolution: {integrity: sha512-qwQWTzRf3umnh2u41gdU+xWYkbzGlKDupc3zeOB+YjmuP1N9wEaUhwS8H7vgrqr0xC9SGNDjeUVcjC4m5BPLBg==}
+  '@atcute/bluesky@3.2.11':
+    resolution: {integrity: sha512-AboS6y4t+zaxIq7E4noue10csSpIuk/Uwo30/l6GgGBDPXrd7STw8Yb5nGZQP+TdG/uC8/c2mm7UnY65SDOh6A==}
 
   '@atcute/client@4.0.5':
     resolution: {integrity: sha512-R8Qen8goGmEkynYGg2m6XFlVmz0GTDvQ+9w+4QqOob+XMk8/WDpF4aImev7WKEde/rV2gjcqW7zM8E6W9NShDA==}
@@ -129,6 +129,9 @@ packages:
 
   '@atcute/lexicons@1.2.2':
     resolution: {integrity: sha512-bgEhJq5Z70/0TbK5sx+tAkrR8FsCODNiL2gUEvS5PuJfPxmFmRYNWaMGehxSPaXWpU2+Oa9ckceHiYbrItDTkA==}
+
+  '@atcute/lexicons@1.2.5':
+    resolution: {integrity: sha512-9yO9WdgxW8jZ7SbzUycH710z+JmsQ9W9n5S6i6eghYju32kkluFmgBeS47r8e8p2+Dv4DemS7o/3SUGsX9FR5Q==}
 
   '@babel/helper-string-parser@7.27.1':
     resolution: {integrity: sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA==}
@@ -1808,13 +1811,13 @@ snapshots:
 
   '@atcute/bluesky-richtext-builder@2.0.4':
     dependencies:
-      '@atcute/bluesky': 3.2.10
+      '@atcute/bluesky': 3.2.11
       '@atcute/lexicons': 1.2.2
 
-  '@atcute/bluesky@3.2.10':
+  '@atcute/bluesky@3.2.11':
     dependencies:
       '@atcute/atproto': 3.1.9
-      '@atcute/lexicons': 1.2.2
+      '@atcute/lexicons': 1.2.5
 
   '@atcute/client@4.0.5':
     dependencies:
@@ -1823,10 +1826,15 @@ snapshots:
 
   '@atcute/identity@1.1.1':
     dependencies:
-      '@atcute/lexicons': 1.2.2
+      '@atcute/lexicons': 1.2.5
       '@badrap/valita': 0.4.6
 
   '@atcute/lexicons@1.2.2':
+    dependencies:
+      '@standard-schema/spec': 1.0.0
+      esm-env: 1.2.2
+
+  '@atcute/lexicons@1.2.5':
     dependencies:
       '@standard-schema/spec': 1.0.0
       esm-env: 1.2.2
