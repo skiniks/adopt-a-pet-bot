@@ -22,10 +22,10 @@ importers:
         version: 4.1.0
       '@hono/node-server':
         specifier: ^1.19.6
-        version: 1.19.6(hono@4.10.7)
+        version: 1.19.6(hono@4.11.3)
       hono:
-        specifier: ^4.10.7
-        version: 4.10.7
+        specifier: ^4.11.3
+        version: 4.11.3
       node-cron:
         specifier: ^4.2.1
         version: 4.2.1
@@ -1145,8 +1145,8 @@ packages:
     resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
     engines: {node: '>=8'}
 
-  hono@4.10.7:
-    resolution: {integrity: sha512-icXIITfw/07Q88nLSkB9aiUrd8rYzSweK681Kjo/TSggaGbOX4RRyxxm71v+3PC8C/j+4rlxGeoTRxQDkaJkUw==}
+  hono@4.11.3:
+    resolution: {integrity: sha512-PmQi306+M/ct/m5s66Hrg+adPnkD5jiO6IjA7WhWw0gSBSo1EcRegwuI1deZ+wd5pzCGynCcn2DprnE4/yEV4w==}
     engines: {node: '>=16.9.0'}
 
   html-entities@2.6.0:
@@ -1969,9 +1969,9 @@ snapshots:
       '@eslint/core': 0.17.0
       levn: 0.4.1
 
-  '@hono/node-server@1.19.6(hono@4.10.7)':
+  '@hono/node-server@1.19.6(hono@4.11.3)':
     dependencies:
-      hono: 4.10.7
+      hono: 4.11.3
 
   '@humanfs/core@0.19.1': {}
 
@@ -2765,7 +2765,7 @@ snapshots:
 
   has-flag@4.0.0: {}
 
-  hono@4.10.7: {}
+  hono@4.11.3: {}
 
   html-entities@2.6.0: {}
 
