@@ -12,7 +12,7 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@atcute/atproto": "^3.1.9",
+    "@atcute/atproto": "^3.1.10",
     "@atcute/bluesky": "^3.2.11",
     "@atcute/bluesky-richtext-builder": "^2.0.4",
     "@atcute/client": "^4.1.0",
